@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOV FIBRA — Sistema de Gestão</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* ═══ VARIÁVEIS ═══ */
+:root{
+  --black:  #0a0a0a;
+  --dark:   #111111;
+  --orange: #ff5c00;
+  --orange2:#ff7a2e;
+  --blue:   #1a56db;
+  --green:  #16a34a;
+  --purple: #7c3aed;
+  --teal:   #0891b2;
+  --red:    #dc2626;
+  --gold:   #f59e0b;
+  --bg:     #f1f3f7;
+  --card:   #ffffff;
+  --border: #e4e7ef;
+  --text:   #111111;
+  --muted:  #6b7280;
+  --radius: 12px;
+  --shadow: 0 2px 14px rgba(0,0,0,.09);
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ═══ LOGIN SCREEN ═══ */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#0a0a0a 0%,#111 60%,#1a0a00 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box{
+  background:#161616;border:1px solid rgba(255,92,0,.2);border-radius:18px;
+  padding:48px 44px;width:100%;max-width:420px;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 60px rgba(255,92,0,.06);
+}
+.login-logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:32px;justify-content:center;}
+.login-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;}
+.login-title span{color:var(--orange);}
+.login-sub{font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.2px;text-align:center;margin-top:4px;margin-bottom:32px;}
+.login-field{margin-bottom:14px;}
+.login-field label{display:block;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.login-field input{
+  width:100%;background:#0d0d0d;border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;color:#fff;font-size:14px;padding:12px 14px;
+  outline:none;transition:border .2s;font-family:inherit;
+}
+.login-field input:focus{border-color:var(--orange);}
+.login-btn{
+  width:100%;background:var(--orange);color:#fff;border:none;border-radius:8px;
+  padding:14px;font-size:14px;font-weight:800;letter-spacing:.5px;
+  cursor:pointer;margin-top:8px;transition:background .2s;font-family:inherit;
+}
+.login-btn:hover{background:var(--orange2);}
+.login-err{color:#ff6b6b;font-size:12px;text-align:center;margin-top:10px;min-height:18px;}
+.login-loading{color:rgba(255,255,255,.4);font-size:12px;text-align:center;margin-top:10px;}
+
+/* ═══ USER INFO NO HEADER ═══ */
+.header-user{display:flex;align-items:center;gap:10px;margin-left:20px;}
+.header-user span{font-size:11px;color:rgba(255,255,255,.45);}
+.btn-logout{
+  background:rgba(255,92,0,.15);border:1px solid rgba(255,92,0,.3);
+  color:var(--orange);font-size:11px;font-weight:700;border-radius:6px;
+  padding:6px 12px;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn-logout:hover{background:rgba(255,92,0,.3);color:#fff;}
+
+/* ═══ MODAL USUÁRIOS ═══ */
+.usr-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.usr-overlay.open{display:flex;}
+.usr-box{background:#fff;border-radius:16px;padding:32px 32px 28px;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.2);}
+.usr-box h2{font-size:16px;font-weight:800;color:var(--text);margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.usr-tabs{display:flex;gap:4px;background:#f1f3f7;border-radius:8px;padding:3px;margin-bottom:22px;}
+.usr-tab{flex:1;padding:8px;border:none;background:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .2s;}
+.usr-tab.active{background:#fff;color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.usr-panel{display:none;}
+.usr-panel.active{display:block;}
+.usr-field{margin-bottom:14px;}
+.usr-field label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:5px;}
+.usr-field input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;}
+.usr-field input:focus{border-color:var(--orange);}
+.usr-msg{font-size:12px;margin-top:8px;min-height:18px;text-align:center;}
+.usr-msg.ok{color:var(--green);}
+.usr-msg.err{color:var(--red);}
+.usr-list{max-height:260px;overflow-y:auto;}
+.usr-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:4px;background:#f8f9fc;border:1px solid var(--border);}
+.usr-row-email{font-size:13px;font-weight:600;color:var(--text);}
+.usr-row-date{font-size:10px;color:var(--muted);}
+.btn-del-usr{background:#fee2e2;color:var(--red);border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-del-usr:hover{background:#fca5a5;}
+
+/* ═══════════════════════════════════════════════
+   HEADER — Preto + Logo MOV em destaque
+════════════════════════════════════════════════ */
+.main-header{
+  background: var(--black);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 32px rgba(0,0,0,.6);
+}
+
+.header-top{
+  display: flex;
+  align-items: center;
+  padding: 0 36px;
+  height: 90px;
+  gap: 24px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* Logo MOV grande e nítida */
+.header-logo-wrap{
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.mov-logo{
+  width: 130px;
+  height: 72px;
+  filter: drop-shadow(0 0 14px rgba(255,92,0,.25));
+}
+
+/* Separador laranja vertical */
+.header-sep{
+  width: 3px;
+  height: 48px;
+  background: var(--orange);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.header-info h1{
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+.header-info p{
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  margin-top: 4px;
+  letter-spacing: .3px;
+}
+
+.header-meta{
+  margin-left: auto;
+  text-align: right;
+}
+.header-meta span{font-size:10px;color:rgba(255,255,255,.35);display:block;text-transform:uppercase;letter-spacing:.5px;}
+.header-meta strong{font-size:14px;color:rgba(255,255,255,.9);font-weight:700;}
+
+/* ═══ TAB NAV ═══ */
+.tab-nav{
+  display: flex;
+  padding: 0 36px;
+  gap: 2px;
+  background: #0f0f0f;
+}
+.tab-btn{
+  padding: 13px 26px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(255,255,255,.38);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.tab-btn:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.04);}
+.tab-btn.active{color:#fff;border-bottom-color:var(--orange);}
+.tab-dot{
+  width: 6px;height:6px;border-radius:50%;
+  background:var(--orange);
+  opacity:0;
+  transition:opacity .2s;
+}
+.tab-btn.active .tab-dot{opacity:1;}
+
+/* ═══ TAB CONTENT ═══ */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ═══ CONTAINER ═══ */
+.container{max-width:1440px;margin:0 auto;padding:28px 28px 52px;}
+
+/* ═══ SECTION TITLE ═══ */
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:1.6px;
+  color:var(--muted);
+  margin:32px 0 16px;
+}
+.section-title::before{
+  content:'';width:3px;height:14px;
+  background:var(--orange);border-radius:2px;flex-shrink:0;
+}
+.section-title::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* ═══ PANEL ═══ */
+.panel{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+.panel h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.panel .sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+
+/* ═══ KPI CARDS ═══ */
+.kpi-row{display:grid;gap:14px;}
+.kpi-row-6{grid-template-columns:repeat(6,1fr);}
+.kpi-row-4{grid-template-columns:repeat(4,1fr);}
+
+.kpi-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:20px 20px 16px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  border-top:3px solid var(--dark);
+  position:relative;overflow:hidden;
+  transition:transform .15s,box-shadow .15s;
+}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.13);}
+.kpi-card.blue   {border-top-color:var(--blue);}
+.kpi-card.green  {border-top-color:var(--green);}
+.kpi-card.orange {border-top-color:var(--orange);}
+.kpi-card.purple {border-top-color:var(--purple);}
+.kpi-card.teal   {border-top-color:var(--teal);}
+.kpi-card.navy   {border-top-color:#0f2d4e;}
+.kpi-card.red    {border-top-color:var(--red);}
+.kpi-card.gold   {border-top-color:var(--gold);}
+.kpi-card.black  {border-top-color:var(--black);}
+
+.kpi-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+.kpi-value{font-size:28px;font-weight:900;line-height:1;color:var(--text);}
+.kpi-sub  {font-size:10px;color:var(--muted);margin-top:6px;}
+.kpi-icon {position:absolute;right:14px;top:14px;font-size:26px;opacity:.07;}
+
+.kpi-card.blue   .kpi-value{color:var(--blue);}
+.kpi-card.green  .kpi-value{color:var(--green);}
+.kpi-card.orange .kpi-value{color:var(--orange);}
+.kpi-card.purple .kpi-value{color:var(--purple);}
+.kpi-card.teal   .kpi-value{color:var(--teal);}
+.kpi-card.navy   .kpi-value{color:#0f2d4e;}
+.kpi-card.red    .kpi-value{color:var(--red);}
+.kpi-card.gold   .kpi-value{color:var(--gold);}
+
+/* ═══ GRIDS ═══ */
+.grid-2 {display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.grid-32{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;}
+
+/* ═══ DATA TABLE ═══ */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table thead th{
+  background:var(--dark);color:#fff;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+  padding:11px 12px;text-align:left;
+}
+.data-table thead th.right{text-align:right;}
+.data-table thead th.center{text-align:center;}
+.data-table tbody td{padding:9px 12px;border-bottom:1px solid var(--border);}
+.data-table tbody td.right{text-align:right;}
+.data-table tbody td.center{text-align:center;}
+.data-table tbody tr:nth-child(even){background:#f8f9fc;}
+.data-table tbody tr:hover{background:#eff3ff;}
+.data-table tfoot td{font-weight:700;font-size:12px;padding:10px 12px;background:#f1f3f9;border-top:2px solid var(--dark);}
+.data-table tfoot td.right{text-align:right;}
+.data-table tfoot td.center{text-align:center;}
+
+/* ═══ BADGE ═══ */
+.badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.badge-blue  {background:#dbeafe;color:var(--blue);}
+.badge-green {background:#dcfce7;color:var(--green);}
+.badge-orange{background:#ffedd5;color:#c2410c;}
+.badge-purple{background:#ede9fe;color:var(--purple);}
+.badge-gray  {background:#f1f5f9;color:var(--muted);}
+
+/* ═══ BAR PROGRESS ═══ */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.bar-label{font-size:11px;color:var(--text);min-width:150px;font-weight:500;}
+.bar-track{flex:1;height:8px;background:#e8eaf0;border-radius:3px;overflow:hidden;}
+.bar-fill {height:100%;border-radius:3px;}
+.bar-val  {font-size:11px;color:var(--muted);min-width:85px;text-align:right;}
+
+/* ═══ RANKING ═══ */
+.ranking-item{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f3f3f5;gap:8px;}
+.ranking-item:last-child{border-bottom:none;}
+.rank-bar-wrap{flex:1;height:6px;background:#f0f1f5;border-radius:3px;overflow:hidden;}
+.rank-bar{height:100%;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:3px;}
+
+/* ═══ FILTROS FTTH ═══ */
+.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-bar label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.filter-bar select{background:white;border:1.5px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:12px;font-family:inherit;}
+.filter-bar select:focus{outline:none;border-color:var(--orange);}
+.ftth-lu{margin-left:auto;font-size:11px;color:var(--muted);}
+.btn-upload{
+  background:var(--dark);color:white;border:none;
+  padding:9px 18px;border-radius:8px;font-size:11px;font-weight:700;
+  cursor:pointer;transition:background .2s;font-family:inherit;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.btn-upload:hover{background:var(--orange);}
+
+/* ═══ FTTH CHARTS ═══ */
+.ftth-bar-area{display:flex;align-items:flex-end;gap:5px;height:200px;border-bottom:1px solid var(--border);}
+.ftth-vg{display:flex;flex-direction:column;align-items:center;flex:1;}
+.ftth-vg-inner{display:flex;align-items:flex-end;gap:2px;width:100%;height:180px;}
+.ftth-vb-wrap{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;flex:1;}
+.ftth-vb-num{font-size:8px;color:var(--muted);margin-bottom:2px;white-space:nowrap;}
+.ftth-vbar{width:100%;border-radius:3px 3px 0 0;min-height:2px;}
+.ftth-vb-lbl{font-size:8px;color:var(--muted);margin-top:5px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px;}
+.legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;justify-content:center;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.donut-wrap svg{width:140px;height:140px;flex-shrink:0;}
+.donut-leg{flex:1;min-width:100px;}
+.donut-li{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.donut-ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.donut-lt{font-size:11px;color:var(--text);font-weight:500;}
+.donut-lv{font-size:10px;color:var(--muted);}
+.oc-row{display:grid;grid-template-columns:110px 1fr 48px;align-items:center;gap:8px;margin-bottom:8px;}
+.oc-label{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oc-track{height:20px;background:#e8eaf0;border-radius:4px;overflow:hidden;display:flex;}
+.oc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+.oc-pct{font-size:11px;color:var(--muted);text-align:right;font-weight:700;}
+.meta-row{margin-bottom:10px;}
+.meta-head{display:flex;justify-content:space-between;margin-bottom:4px;}
+.meta-city{font-size:12px;color:var(--text);font-weight:600;}
+.meta-pct{font-size:11px;color:var(--muted);}
+.meta-track{position:relative;height:14px;background:#e8eaf0;border-radius:3px;overflow:hidden;}
+.meta-fill{position:absolute;height:100%;background:var(--blue);border-radius:3px;}
+.meta-line{position:absolute;height:100%;width:2px;background:var(--gold);}
+.prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px;}
+.prog-row{display:grid;grid-template-columns:130px 1fr 52px 80px;align-items:center;gap:8px;padding:4px 0;}
+.prog-city{font-size:11px;color:var(--text);}
+.prog-track{height:9px;background:#e8eaf0;border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:999px;}
+.prog-pct{font-size:11px;color:var(--muted);text-align:right;font-weight:700;}
+.prog-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;text-align:center;text-transform:uppercase;}
+.prog-ok{background:#dcfce7;color:#16a34a;}
+.prog-wn{background:#ffedd5;color:#c2410c;}
+.prog-lw{background:#fee2e2;color:var(--red);}
+.ftth-table thead th{text-align:center;white-space:nowrap;}
+.ftth-table thead th:first-child{text-align:left;}
+.ftth-table tbody td{text-align:center;}
+.ftth-table tbody td:first-child{text-align:left;font-weight:600;}
+.ftth-total td{background:#f1f3f9!important;font-weight:700;color:var(--dark);border-top:2px solid var(--dark);}
+.ftth-tok{color:var(--green);font-weight:700;}
+.ftth-tno{color:var(--red);}
+.ftth-tp{color:var(--blue);font-weight:600;}
+
+/* ═══ EQUATORIAL ═══ */
+.eq-filters input,.eq-filters select{
+  border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;
+  outline:none;background:white;transition:border-color .2s;font-family:inherit;
+}
+.eq-filters input:focus,.eq-filters select:focus{border-color:var(--orange);}
+.eq-table{width:100%;border-collapse:collapse;font-size:12px;}
+.eq-table thead th{background:#111;color:#fff;text-align:left;padding:10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+.eq-table td{padding:9px 10px;border-bottom:1px solid #f3f3f5;}
+.eq-table tr:hover td{background:#f8f9ff;}
+.eq-table .num{text-align:right;}
+.eq-mun-badge{background:#dcfce7;color:#166534;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:800;}
+.btn-sm{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:10px;font-weight:700;transition:all .15s;font-family:inherit;}
+.btn-edit{background:#FFF3E0;color:#E65100;}
+.btn-edit:hover{background:#FFE0B2;}
+.btn-delete{background:#FFEBEE;color:#C62828;margin-left:4px;}
+.btn-delete:hover{background:#FFCDD2;}
+.table-footer{font-size:11px;color:#aaa;text-align:right;margin-top:10px;}
+.status-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:9px;font-weight:800;text-transform:uppercase;}
+
+/* ═══ SEÇÃO HEADER ═══ */
+.section-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.btn-primary{
+  background:var(--dark);color:white;border:none;
+  padding:10px 20px;border-radius:8px;font-size:11px;font-weight:800;
+  cursor:pointer;transition:background .2s;font-family:inherit;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.btn-primary:hover{background:var(--orange);}
+
+/* ═══ MODAL ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:white;border-radius:16px;padding:30px 34px;width:100%;max-width:500px;box-shadow:0 28px 70px rgba(0,0,0,.35);animation:slideUp .2s ease;}
+@keyframes slideUp{from{transform:translateY(22px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal h3{font-size:17px;margin-bottom:22px;color:var(--dark);font-weight:800;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:10px;font-weight:800;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group select{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit;}
+.form-group input:focus,.form-group select:focus{border-color:var(--orange);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;}
+.btn-cancel{padding:11px 22px;border-radius:8px;border:none;background:#f0f0f0;color:#555;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;}
+.btn-cancel:hover{background:#e0e0e0;}
+.btn-save{padding:11px 24px;border-radius:8px;border:none;background:var(--dark);color:white;cursor:pointer;font-size:13px;font-weight:700;transition:background .2s;font-family:inherit;}
+.btn-save:hover{background:var(--orange);}
+
+/* ═══ TOAST & SPINNER ═══ */
+.toast{position:fixed;bottom:28px;right:28px;padding:14px 22px;border-radius:8px;color:white;font-size:13px;font-weight:700;opacity:0;transform:translateY(16px);transition:all .3s ease;z-index:2000;pointer-events:none;}
+.toast.visible{opacity:1;transform:translateY(0);}
+.toast.success{background:#16a34a;}
+.toast.error{background:var(--red);}
+.toast.info{background:var(--dark);}
+.spinner-wrap{text-align:center;padding:52px 20px;color:#bbb;}
+.spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:var(--orange);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){
+  .kpi-row-6{grid-template-columns:repeat(3,1fr);}
+  .kpi-row-4{grid-template-columns:repeat(2,1fr);}
+  .grid-2,.grid-21,.grid-32{grid-template-columns:1fr;}
+  .prog-grid{grid-template-columns:1fr;}
+}
+@media(max-width:700px){
+  .kpi-row-6,.kpi-row-4{grid-template-columns:repeat(2,1fr);}
+  .tab-btn{padding:11px 14px;font-size:10px;}
+  .header-top{padding:0 16px;height:76px;}
+  .tab-nav{padding:0 16px;}
+  .container{padding:16px 14px 44px;}
+  .mov-logo{width:100px;height:56px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo-wrap">
+      <div class="login-title">MOV <span>FIBRA</span></div>
+    </div>
+    <div class="login-sub">Sistema de Gestão — Acesso Restrito</div>
+    <div class="login-field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-loading" id="login-loading"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER — Logo MOV em destaque
+════════════════════════════════════════════════════ -->
+<header class="main-header">
+  <div class="header-top">
+
+    <!-- SVG da logo MOV (fiel ao original: M e V inclinados, O grande sobreposto) -->
+    <div class="header-logo-wrap">
+      <svg class="mov-logo" viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" fill="white" aria-label="MOV">
+        <!-- M — Bold, rotacionado -13° -->
+        <g transform="rotate(-13 82 144)">
+          <path d="M18,228 L18,62 L82,150 L146,62 L146,228 L124,228 L124,108 L82,162 L40,108 L40,228 Z"/>
+        </g>
+        <!-- V — Bold, rotacionado +11° -->
+        <g transform="rotate(11 290 130)">
+          <path d="M228,52 L290,212 L352,52 L330,52 L290,188 L250,52 Z"/>
+        </g>
+        <!-- O — Grande anel oval, rotacionado -22°, sobreposto ao centro -->
+        <g transform="rotate(-22 185 178)">
+          <path fill-rule="evenodd" d="
+            M185,76 C141,76 117,113 117,178 C117,243 141,280 185,280
+            C229,280 253,243 253,178 C253,113 229,76 185,76 Z
+            M185,107 C214,107 224,134 224,178 C224,222 214,249 185,249
+            C156,249 146,222 146,178 C146,134 156,107 185,107 Z
+          "/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="header-sep"></div>
+
+    <div class="header-info">
+      <h1>Sistema de Gestão</h1>
+      <p>Rede FTTH &nbsp;&middot;&nbsp; Projetos Equatorial &nbsp;&middot;&nbsp; Inventário de Equipamentos</p>
+    </div>
+
+    <div class="header-meta">
+      <span>Atualizado em</span>
+      <strong id="hdr-date">—</strong>
+    </div>
+    <div class="header-user">
+      <span id="hdr-user-email"></span>
+      <button class="btn-logout" onclick="openUsrModal()" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.7);margin-right:4px;">👥 Usuários</button>
+      <button class="btn-logout" onclick="doLogout()">⎋ Sair</button>
+    </div>
+  </div>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="ftth" onclick="switchTab('ftth')">
+      <span class="tab-dot"></span>🌐 Rede FTTH
+    </button>
+    <button class="tab-btn" data-tab="equatorial" onclick="switchTab('equatorial')">
+      <span class="tab-dot"></span>⚡ Projetos Equatorial
+    </button>
+    <button class="tab-btn" data-tab="inventario" onclick="switchTab('inventario')">
+      <span class="tab-dot"></span>📦 Inventário de Equipamentos
+    </button>
+    <button class="tab-btn" data-tab="mapa" onclick="switchTab('mapa')">
+      <span class="tab-dot"></span>🗺️ Mapa de Rede
+    </button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 1 — REDE FTTH
+════════════════════════════════════════════════════ -->
+<div id="tab-ftth" class="tab-content active">
+<div class="container">
+
+  <div class="filter-bar">
+    <label>Cidade:</label>
+    <select id="ftth-cf"><option value="TODAS">Todas as cidades</option></select>
+    <button class="btn-upload" onclick="document.getElementById('ftth-fi').click()">&#8679; Atualizar via Excel</button>
+    <input type="file" id="ftth-fi" accept=".xlsx,.xls" style="display:none">
+    <span class="ftth-lu" id="ftth-lu">Dados: 21/05/2026 — Power BI + KMZ</span>
+  </div>
+
+  <div class="section-title">Indicadores de Cobertura FTTH</div>
+  <div class="kpi-row kpi-row-6" style="margin-bottom:24px;">
+    <div class="kpi-card blue"><div class="kpi-icon">🏠</div><div class="kpi-label">Home Passad</div><div class="kpi-value" id="ftth-kp">0</div><div class="kpi-sub" id="ftth-kps">&nbsp;</div></div>
+    <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-label">Home Connect</div><div class="kpi-value" id="ftth-kc">0</div><div class="kpi-sub" id="ftth-kcs">&nbsp;</div></div>
+    <div class="kpi-card red"><div class="kpi-icon">📍</div><div class="kpi-label">Portas Vagas</div><div class="kpi-value" id="ftth-kv">0</div><div class="kpi-sub" id="ftth-kvs">&nbsp;</div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">📦</div><div class="kpi-label">Caixas CTO</div><div class="kpi-value" id="ftth-kt">0</div><div class="kpi-sub">Total de caixas</div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">🔌</div><div class="kpi-label">Cabo BK (km)</div><div class="kpi-value" id="ftth-kb">0</div><div class="kpi-sub">Backbone total</div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">📈</div><div class="kpi-label">Taxa de Conexão</div><div class="kpi-value" id="ftth-kx">0%</div><div class="kpi-sub">Connect / Passad</div></div>
+  </div>
+
+  <div class="section-title">Gráficos de Cobertura</div>
+  <div class="grid-21" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>HomePassad vs HomeConnect por Cidade</h3>
+      <div class="sub">comparativo de cobertura e conexão</div>
+      <div class="ftth-bar-area" id="ftth-bpc"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1a56db"></div>Home Passad</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Home Connect</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Distribuição HomeConnect</h3>
+      <div class="sub">participação por cidade</div>
+      <div class="donut-wrap" id="ftth-dw"></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>Ocupação de Portas por Cidade (%)</h3>
+      <div class="sub">conectados vs vagas</div>
+      <div id="ftth-oc"></div>
+      <div class="legend" style="margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Ocupadas</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div>Vagas</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>HomePassad vs Meta 80% IBGE</h3>
+      <div class="sub">progresso por cidade</div>
+      <div id="ftth-mc"></div>
+      <div class="legend" style="margin-top:8px;">
+        <div class="legend-item"><div class="legend-dot" style="background:#1a56db"></div>HomePassad</div>
+        <div class="legend-item"><div style="width:10px;height:10px;background:#f59e0b;"></div>&nbsp;Meta 80%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <h3>Avanço HomePassad sobre Meta 80% IBGE por Cidade</h3>
+    <div class="sub">progresso individual em relação à meta</div>
+    <div class="prog-grid" id="ftth-pg"></div>
+  </div>
+
+  <div class="section-title">Dados Detalhados por Cidade</div>
+  <div class="panel" style="padding:0;overflow:hidden;">
+    <div class="table-scroll ftth-table">
+      <table class="data-table">
+        <thead><tr>
+          <th>Cidade</th><th class="center">Home Passad</th><th class="center">Home Connect</th>
+          <th class="center">Portas Vagas</th><th class="center">Caixas CTO</th><th class="center">Cabo BK km</th>
+          <th class="center">Domicílios IBGE</th><th class="center">Meta 80%</th>
+          <th class="center">Taxa Conexão</th><th class="center">% Meta</th><th class="center">Status</th>
+        </tr></thead>
+        <tbody id="ftth-tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 2 — PROJETOS EQUATORIAL
+════════════════════════════════════════════════════ -->
+<div id="tab-equatorial" class="tab-content">
+<div class="container">
+
+  <div class="section-title">Resumo de Projetos Equatorial</div>
+  <div class="kpi-row kpi-row-6" style="margin-bottom:24px;">
+    <div class="kpi-card blue"><div class="kpi-icon">📋</div><div class="kpi-label">Total Projetos</div><div class="kpi-value" id="eq-cTotal">—</div><div class="kpi-sub">protocolos cadastrados</div></div>
+    <div class="kpi-card green"><div class="kpi-icon">🆕</div><div class="kpi-label">Pontos Novos</div><div class="kpi-value" id="eq-cNovos">—</div><div class="kpi-sub">total acumulado</div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">🔄</div><div class="kpi-label">Pontos Existentes</div><div class="kpi-value" id="eq-cExist">—</div><div class="kpi-sub">total acumulado</div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">📍</div><div class="kpi-label">Total de Pontos</div><div class="kpi-value" id="eq-cTotal2">—</div><div class="kpi-sub">novos + existentes</div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">🏙️</div><div class="kpi-label">Municípios</div><div class="kpi-value" id="eq-cMun">—</div><div class="kpi-sub">atendidos</div></div>
+    <div class="kpi-card gold"><div class="kpi-icon">💰</div><div class="kpi-label">Custo Total</div><div class="kpi-value" style="font-size:18px;" id="eq-cCusto">—</div><div class="kpi-sub">R$ 6,28 por poste</div></div>
+  </div>
+
+  <div class="section-title">Análise por Município</div>
+  <div class="grid-21" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>Total de Pontos por Município</h3>
+      <div class="sub">distribuição de pontos novos + existentes</div>
+      <canvas id="eq-grafico" height="120"></canvas>
+    </div>
+    <div class="panel">
+      <h3>🏆 Ranking por Pontos</h3>
+      <div id="eq-ranking" style="color:var(--muted);font-size:12px;">Carregando...</div>
+    </div>
+  </div>
+
+  <div class="section-title">Todos os Projetos</div>
+  <div class="panel">
+    <div class="section-header">
+      <div style="font-size:13px;font-weight:700;color:var(--text);">Lista de Protocolos Cadastrados</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="eq-filters" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="eq-busca" placeholder="🔍 Buscar protocolo..." oninput="eqFiltrar()" style="width:210px;" />
+          <select id="eq-filtroMun" onchange="eqFiltrar()"><option value="">Todos os municípios</option></select>
+          <select id="eq-filtroStatus" onchange="eqFiltrar()">
+            <option value="">Todos os status</option>
+            <option>APROVADO</option><option>EM ANÁLISE</option>
+            <option>EM EXECUÇÃO</option><option>CONCLUÍDO</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="eqAbrirModal()">+ Novo Projeto</button>
+      </div>
+    </div>
+    <div class="table-scroll" id="eq-tabelaContainer">
+      <div class="spinner-wrap"><div class="spinner"></div>Carregando dados do Supabase...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TAB 3 — INVENTÁRIO DE EQUIPAMENTOS
+════════════════════════════════════════════════════ -->
+<div id="tab-inventario" class="tab-content">
+<div class="container">
+
+  <div class="section-title">Indicadores Gerais do Inventário</div>
+  <div class="kpi-row kpi-row-4" style="margin-bottom:24px;">
+    <div class="kpi-card blue"><div class="kpi-icon">📦</div><div class="kpi-label">Total Itens — BASE</div><div class="kpi-value">528</div><div class="kpi-sub">equipamentos cadastrados</div></div>
+    <div class="kpi-card navy"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — BASE</div><div class="kpi-value">R$ 4,51M</div><div class="kpi-sub">R$ 4.508.436,54</div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">🔌</div><div class="kpi-label">Total Itens — SFP</div><div class="kpi-value">148</div><div class="kpi-sub">módulos ópticos</div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — SFP</div><div class="kpi-value">R$ 172K</div><div class="kpi-sub">R$ 172.177,00</div></div>
+    <div class="kpi-card green"><div class="kpi-icon">📡</div><div class="kpi-label">Total Geral (BASE+SFP)</div><div class="kpi-value">676</div><div class="kpi-sub">itens no inventário</div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">💎</div><div class="kpi-label">Valor Total Geral</div><div class="kpi-value">R$ 4,68M</div><div class="kpi-sub">R$ 4.680.613,54</div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">🏙️</div><div class="kpi-label">Cidades Atendidas</div><div class="kpi-value">10</div><div class="kpi-sub">municípios com ativos</div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">🗼</div><div class="kpi-label">POPs (Hostnames)</div><div class="kpi-value">38</div><div class="kpi-sub">pontos de presença únicos</div></div>
+  </div>
+
+  <div class="section-title">Por Categoria e Cidade</div>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>Distribuição por Categoria</h3>
+      <div class="sub">participação no valor total do inventário BASE</div>
+      <canvas id="inv-chartCategoria" height="220"></canvas>
+    </div>
+    <div class="panel">
+      <h3>Valor por Cidade</h3>
+      <div class="sub">top 10 municípios — base de equipamentos (R$)</div>
+      <canvas id="inv-chartCidade" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Resumo por Categoria</div>
+  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:16px;">
+    <table class="data-table">
+      <thead><tr><th>Categoria</th><th class="center">Qtd Itens</th><th class="right">Valor Total (R$)</th><th class="right">% do Total</th><th class="center">Participação</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-blue">ATIVO REDE</span></td><td class="center">206</td><td class="right">3.363.002,67</td><td class="right"><strong>74,6%</strong></td><td><div class="bar-track"><div class="bar-fill" style="width:74.6%;background:#1a56db"></div></div></td></tr>
+        <tr><td><span class="badge badge-orange">ATIVO ELETRICO</span></td><td class="center">75</td><td class="right">359.774,24</td><td class="right">8,0%</td><td><div class="bar-track"><div class="bar-fill" style="width:8%;background:#f97316"></div></div></td></tr>
+        <tr><td><span class="badge badge-gray">ESTRUTURA</span></td><td class="center">29</td><td class="right">342.581,20</td><td class="right">7,6%</td><td><div class="bar-track"><div class="bar-fill" style="width:7.6%;background:#64748b"></div></div></td></tr>
+        <tr><td><span class="badge badge-green">PASSIVO ELETRICO</span></td><td class="center">168</td><td class="right">313.130,44</td><td class="right">6,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:6.9%;background:#16a34a"></div></div></td></tr>
+        <tr><td><span class="badge badge-purple">PASSIVO OPTICO</span></td><td class="center">50</td><td class="right">129.947,99</td><td class="right">2,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:2.9%;background:#7c3aed"></div></div></td></tr>
+      </tbody>
+      <tfoot><tr><td><strong>TOTAL</strong></td><td class="center"><strong>528</strong></td><td class="right"><strong>4.508.436,54</strong></td><td class="right"><strong>100%</strong></td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="section-title">Por Fabricante e Tipo de Equipamento</div>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>Top 8 Fabricantes por Valor (R$)</h3>
+      <div class="sub">participação financeira no inventário BASE</div>
+      <canvas id="inv-chartFabricante" height="240"></canvas>
+    </div>
+    <div class="panel">
+      <h3>Top 8 Tipos de Equipamento</h3>
+      <div class="sub">ranking por valor patrimonial (R$)</div>
+      <canvas id="inv-chartTipo" height="240"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <table class="data-table">
+        <thead><tr><th>Fabricante</th><th class="center">Itens</th><th class="right">Valor (R$)</th><th class="right">% Valor</th></tr></thead>
+        <tbody>
+          <tr><td>HUAWEI</td><td class="center">116</td><td class="right">2.153.252,59</td><td class="right"><strong>47,8%</strong></td></tr>
+          <tr><td>ZTE</td><td class="center">51</td><td class="right">981.562,78</td><td class="right">21,8%</td></tr>
+          <tr><td>INFRAESTRUTURA</td><td class="center">40</td><td class="right">273.405,00</td><td class="right">6,1%</td></tr>
+          <tr><td>XPS</td><td class="center">33</td><td class="right">225.037,14</td><td class="right">5,0%</td></tr>
+          <tr><td>UNIÃO</td><td class="center">17</td><td class="right">204.765,00</td><td class="right">4,5%</td></tr>
+          <tr><td>MOURA</td><td class="center">114</td><td class="right">131.902,60</td><td class="right">2,9%</td></tr>
+          <tr><td>FIBRACEM</td><td class="center">45</td><td class="right">109.793,70</td><td class="right">2,4%</td></tr>
+          <tr><td>MIKROTIK</td><td class="center">12</td><td class="right">79.353,20</td><td class="right">1,8%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <table class="data-table">
+        <thead><tr><th>Tipo de Equipamento</th><th class="center">Itens</th><th class="right">Valor (R$)</th><th class="right">% Valor</th></tr></thead>
+        <tbody>
+          <tr><td>PLACA GPON</td><td class="center">80</td><td class="right">1.234.563,54</td><td class="right"><strong>27,4%</strong></td></tr>
+          <tr><td>OLT</td><td class="center">31</td><td class="right">1.083.823,34</td><td class="right">24,0%</td></tr>
+          <tr><td>SWITCH</td><td class="center">28</td><td class="right">374.801,21</td><td class="right">8,3%</td></tr>
+          <tr><td>NE8000</td><td class="center">4</td><td class="right">327.271,80</td><td class="right">7,3%</td></tr>
+          <tr><td>RACK</td><td class="center">27</td><td class="right">315.581,20</td><td class="right">7,0%</td></tr>
+          <tr><td>FONTE RETIFICADORA</td><td class="center">42</td><td class="right">250.432,21</td><td class="right">5,6%</td></tr>
+          <tr><td>BATERIA DE CHUMBO</td><td class="center">156</td><td class="right">166.972,60</td><td class="right">3,7%</td></tr>
+          <tr><td>PARTE ELETRICA POP</td><td class="center">30</td><td class="right">150.000,00</td><td class="right">3,3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Por POP e Módulos SFP</div>
+  <div class="grid-32" style="margin-bottom:16px;">
+    <div class="panel">
+      <h3>Top 10 POPs por Valor Patrimonial (R$)</h3>
+      <div class="sub">distribuição de ativos por ponto de presença</div>
+      <canvas id="inv-chartPOP" height="220"></canvas>
+    </div>
+    <div class="panel">
+      <h3>SFP — Módulos Ópticos</h3>
+      <div class="sub">distribuição BIDI vs DUPLEX</div>
+      <div style="display:flex;justify-content:center;">
+        <canvas id="inv-chartSFP" height="200" width="200"></canvas>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="bar-row">
+          <div class="bar-label">🔵 DUPLEX (40G LR4)</div>
+          <div class="bar-track"><div class="bar-fill" style="width:57.4%;background:#7c3aed"></div></div>
+          <div class="bar-val">85 itens — R$ 121.896</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">🟠 BIDI</div>
+          <div class="bar-track"><div class="bar-fill" style="width:42.6%;background:#ff5c00"></div></div>
+          <div class="bar-val">63 itens — R$ 50.281</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;">Total: 148 itens &nbsp;|&nbsp; Valor: R$ 172.177</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Detalhe por Cidade</div>
+  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:16px;">
+    <table class="data-table">
+      <thead><tr><th>Cidade</th><th class="center">Qtd Itens</th><th class="right">Valor (R$)</th><th class="right">% do Total</th><th class="center">Participação Visual</th></tr></thead>
+      <tbody>
+        <tr><td><strong>SANTARÉM</strong></td><td class="center">186</td><td class="right">1.907.394,96</td><td class="right"><strong>42,3%</strong></td><td><div class="bar-track"><div class="bar-fill" style="width:42.3%;background:#1a56db"></div></div></td></tr>
+        <tr><td>ALTAMIRA</td><td class="center">137</td><td class="right">1.150.557,90</td><td class="right">25,5%</td><td><div class="bar-track"><div class="bar-fill" style="width:25.5%;background:#0891b2"></div></div></td></tr>
+        <tr><td>ITAITUBA</td><td class="center">66</td><td class="right">600.542,19</td><td class="right">13,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:13.3%;background:#ff5c00"></div></div></td></tr>
+        <tr><td>URUARÁ</td><td class="center">20</td><td class="right">174.278,62</td><td class="right">3,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.9%;background:#16a34a"></div></div></td></tr>
+        <tr><td>RURÓPOLIS</td><td class="center">31</td><td class="right">169.806,40</td><td class="right">3,8%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.8%;background:#7c3aed"></div></div></td></tr>
+        <tr><td>MEDICILÂNDIA</td><td class="center">37</td><td class="right">148.469,01</td><td class="right">3,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.3%;background:#dc2626"></div></div></td></tr>
+        <tr><td>BELTERRA</td><td class="center">16</td><td class="right">124.622,38</td><td class="right">2,8%</td><td><div class="bar-track"><div class="bar-fill" style="width:2.8%;background:#d97706"></div></div></td></tr>
+        <tr><td>BRASIL NOVO</td><td class="center">15</td><td class="right">91.554,23</td><td class="right">2,0%</td><td><div class="bar-track"><div class="bar-fill" style="width:2%;background:#0f766e"></div></div></td></tr>
+        <tr><td>MOJUÍ</td><td class="center">7</td><td class="right">84.740,92</td><td class="right">1,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:1.9%;background:#64748b"></div></div></td></tr>
+        <tr><td>PLACAS</td><td class="center">13</td><td class="right">56.469,93</td><td class="right">1,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:1.3%;background:#94a3b8"></div></div></td></tr>
+      </tbody>
+      <tfoot><tr><td><strong>TOTAL</strong></td><td class="center"><strong>528</strong></td><td class="right"><strong>4.508.436,54</strong></td><td class="right"><strong>100%</strong></td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <div style="text-align:center;font-size:11px;color:var(--muted);padding:20px 0 8px;border-top:1px solid var(--border);margin-top:16px;">
+    MOV FIBRA — Sistema de Gestão &nbsp;|&nbsp; Inventario_Equipamentos_Infraestrutura.xlsx &nbsp;|&nbsp; 21/05/2026
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL EQUATORIAL ═══ -->
+<div class="overlay" id="eq-overlay">
+  <div class="modal">
+    <h3 id="eq-modalTitulo">Novo Projeto</h3>
+    <input type="hidden" id="eq-fId" />
+    <div class="form-group"><label>Nº Protocolo *</label><input type="text" id="eq-fProtocolo" placeholder="Ex: 2025.01.052810000020" /></div>
+    <div class="form-group"><label>Município *</label><input type="text" id="eq-fMunicipio" placeholder="Ex: ALTAMIRA" /></div>
+    <div class="form-row">
+      <div class="form-group"><label>Pontos Novos</label><input type="number" id="eq-fNovos" placeholder="0" min="0" /></div>
+      <div class="form-group"><label>Pontos Existentes</label><input type="number" id="eq-fExist" placeholder="0" min="0" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Status</label><select id="eq-fStatus"><option>APROVADO</option><option>EM ANÁLISE</option><option>EM EXECUÇÃO</option><option>CONCLUÍDO</option></select></div>
+      <div class="form-group"><label>Data de Aprovação</label><input type="date" id="eq-fData" /></div>
+    </div>
+    <div class="form-group"><label>Observações</label><input type="text" id="eq-fObs" placeholder="Opcional" /></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="eqFecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="eqSalvar()">Salvar Projeto</button>
+    </div>
+  </div>
+</div>
+<!-- ═══════════════════════════════════════════════════
+     TAB 4 — MAPA DE REDE
+════════════════════════════════════════════════════ -->
+<div id="tab-mapa" class="tab-content" style="height:calc(100vh - 145px);padding:0;overflow:hidden;">
+  <iframe id="mapa-iframe" src="" style="width:100%;height:100%;border:none;display:block;"></iframe>
+</div>
+
+<!-- ═══ MODAL USUÁRIOS ═══ -->
+<div class="usr-overlay" id="usr-overlay">
+  <div class="usr-box">
+    <h2>👥 Gerenciar Usuários <span style="margin-left:auto;font-size:20px;cursor:pointer;color:#aaa" onclick="closeUsrModal()">×</span></h2>
+    <div class="usr-tabs">
+      <button class="usr-tab active" onclick="usrTab('cadastrar',this)">➕ Cadastrar</button>
+      <button class="usr-tab" onclick="usrTab('listar',this)">📋 Usuários Ativos</button>
+    </div>
+
+    <!-- CADASTRAR -->
+    <div class="usr-panel active" id="usr-cadastrar">
+      <div class="usr-field"><label>E-mail</label>
+        <input type="email" id="usr-email" placeholder="usuario@movfibra.com.br">
+      </div>
+      <div class="usr-field"><label>Senha</label>
+        <input type="password" id="usr-senha" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeUsrModal()">Fechar</button>
+        <button class="btn-save" onclick="usrCadastrar()">Cadastrar Usuário</button>
+      </div>
+      <div class="usr-msg" id="usr-msg"></div>
+    </div>
+
+    <!-- LISTAR -->
+    <div class="usr-panel" id="usr-listar">
+      <div class="usr-list" id="usr-list-content">
+        <div style="text-align:center;color:#aaa;padding:20px">Carregando...</div>
+      </div>
+      <div class="modal-actions" style="margin-top:16px">
+        <button class="btn-cancel" onclick="closeUsrModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   AUTENTICAÇÃO — Supabase Auth
+════════════════════════════════════════ */
+const {createClient: _createClient} = window.supabase;
+const authDB = _createClient('https://gvydcumpsstixinqyn.supabase.co','sb_publishable_9w3keSG__NMzod4pwK6g5w_c3Xv32o2');
+
+async function checkAuth(){
+  const {data:{session}} = await authDB.auth.getSession();
+  if(session){
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('hdr-user-email').textContent = session.user.email;
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+}
+
+async function doLogin(){
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-err');
+  const loadEl   = document.getElementById('login-loading');
+  errEl.textContent = '';
+  if(!email||!password){errEl.textContent='Preencha e-mail e senha.';return;}
+  loadEl.textContent = 'Autenticando...';
+  const {error} = await authDB.auth.signInWithPassword({email,password});
+  loadEl.textContent = '';
+  if(error){
+    errEl.textContent = error.message.includes('Invalid') ? 'E-mail ou senha incorretos.' : error.message;
+  } else {
+    checkAuth();
+  }
+}
+
+async function doLogout(){
+  await authDB.auth.signOut();
+  document.getElementById('hdr-user-email').textContent = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-password').value = '';
+}
+
+checkAuth();
+
+/* ════════════════════════════════════════
+   GERENCIAMENTO DE USUÁRIOS
+════════════════════════════════════════ */
+function openUsrModal(){
+  document.getElementById('usr-overlay').classList.add('open');
+  usrTab('cadastrar', document.querySelector('.usr-tab'));
+}
+function closeUsrModal(){
+  document.getElementById('usr-overlay').classList.remove('open');
+  document.getElementById('usr-msg').textContent='';
+  document.getElementById('usr-email').value='';
+  document.getElementById('usr-senha').value='';
+}
+function usrTab(name, btn){
+  document.querySelectorAll('.usr-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.usr-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('usr-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='listar') usrCarregarLista();
+}
+async function usrCadastrar(){
+  const email=document.getElementById('usr-email').value.trim();
+  const senha=document.getElementById('usr-senha').value;
+  const msg=document.getElementById('usr-msg');
+  msg.className='usr-msg'; msg.textContent='';
+  if(!email||!senha){msg.className='usr-msg err';msg.textContent='Preencha e-mail e senha.';return;}
+  if(senha.length<6){msg.className='usr-msg err';msg.textContent='Senha deve ter mínimo 6 caracteres.';return;}
+  msg.textContent='Cadastrando...';
+  const {error}=await authDB.auth.signUp({email,password:senha});
+  if(error){
+    msg.className='usr-msg err';
+    msg.textContent=error.message.includes('already')?'E-mail já cadastrado.':error.message;
+  } else {
+    await authDB.from('app_usuarios').upsert({email,criado_em:new Date().toISOString()},{onConflict:'email'});
+    msg.className='usr-msg ok';
+    msg.textContent='✅ Usuário cadastrado com sucesso!';
+    document.getElementById('usr-email').value='';
+    document.getElementById('usr-senha').value='';
+  }
+}
+async function usrCarregarLista(){
+  const el=document.getElementById('usr-list-content');
+  el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px">Carregando...</div>';
+  const {data,error}=await authDB.from('app_usuarios').select('*').order('criado_em',{ascending:false});
+  if(error||!data||!data.length){
+    el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px">Nenhum usuário cadastrado ainda.</div>';
+    return;
+  }
+  el.innerHTML=data.map(u=>`<div class="usr-row">
+    <div><div class="usr-row-email">${u.email}</div>
+    <div class="usr-row-date">Cadastrado em ${new Date(u.criado_em).toLocaleDateString('pt-BR')}</div></div>
+  </div>`).join('');
+}
+
+/* ════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════ */
+let equatorialReady=false, inventarioReady=false, mapaReady=false;
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelector('[data-tab="'+tab+'"]').classList.add('active');
+  if(tab==='equatorial'&&!equatorialReady){equatorialReady=true;eqInit();}
+  if(tab==='inventario'&&!inventarioReady){inventarioReady=true;invInitCharts();}
+  if(tab==='mapa'&&!mapaReady){
+    mapaReady=true;
+    document.getElementById('mapa-iframe').src='mapa_rede.html';
+  }
+}
+
+/* ════════════════════════════════════════
+   FTTH
+════════════════════════════════════════ */
+var FTTH_CTO=10747,FTTH_BK=187.33;
+var FTTH_COR=['#1a56db','#16a34a','#ff5c00','#0891b2','#7c3aed','#dc2626','#f59e0b','#374151','#1b5e20'];
+var FTTH_D=[];
+(function initFTTH(){
+  var base=[
+    {cidade:"Santarém",         passad:69040,connect:28359,cto:0,bk:287.30,ibge:98420},
+    {cidade:"Altamira",         passad:39160,connect:11163,cto:0,bk:202.94,ibge:35420},
+    {cidade:"Itaituba",         passad:25312,connect:9974, cto:0,bk:49.73, ibge:38750},
+    {cidade:"Uruará",           passad:6552, connect:2885, cto:0,bk:3.84,  ibge:14560},
+    {cidade:"Brasil Novo",      passad:6088, connect:1969, cto:0,bk:26.76, ibge:8240},
+    {cidade:"Rurópolis",        passad:3952, connect:737,  cto:0,bk:149.12,ibge:10320},
+    {cidade:"Medicilândia",     passad:3808, connect:225,  cto:0,bk:2.67,  ibge:9870},
+    {cidade:"Mojuí dos Campos", passad:2496, connect:548,  cto:0,bk:57.17, ibge:5630},
+    {cidade:"Belterra",         passad:2752, connect:97,   cto:0,bk:5.87,  ibge:6180}
+  ];
+  FTTH_D=base.map(d=>({...d,meta:Math.round(d.ibge*0.8)}));
+  var sel=document.getElementById('ftth-cf');
+  FTTH_D.forEach(d=>{var o=document.createElement('option');o.value=d.cidade;o.textContent=d.cidade;sel.appendChild(o);});
+  document.getElementById('ftth-cf').addEventListener('change',ftthApplyFilter);
+  ftthRenderAll(FTTH_D);
+})();
+function ftthApplyFilter(){var v=document.getElementById('ftth-cf').value;ftthRenderAll(v==='TODAS'?FTTH_D:FTTH_D.filter(d=>d.cidade===v));}
+function ftthRenderAll(data){ftthCards(data);ftthBar(data);ftthDonut(data);ftthOcup(data);ftthMeta(data);ftthProg(data);ftthTable(data);}
+function fS(data,k){return data.reduce((a,d)=>a+(d[k]||0),0);}
+function fN(n){return Number(n).toLocaleString('pt-BR');}
+function fK(n){return n>=1000?(n/1000).toFixed(1)+'k':String(n);}
+function fP(a,b){return b>0?((a/b)*100).toFixed(1)+'%':'0%';}
+function ftthCards(data){
+  var p=fS(data,'passad'),c=fS(data,'connect'),t=fS(data,'cto')||FTTH_CTO,b=fS(data,'bk'),m=fS(data,'meta');
+  document.getElementById('ftth-kp').textContent=fN(p);
+  document.getElementById('ftth-kps').textContent=fP(p,m)+' da meta 80%';
+  document.getElementById('ftth-kc').textContent=fN(c);
+  document.getElementById('ftth-kcs').textContent=fP(c,p)+' taxa de conexão';
+  document.getElementById('ftth-kv').textContent=fN(p-c);
+  document.getElementById('ftth-kvs').textContent=fP(p-c,p)+' capacidade livre';
+  document.getElementById('ftth-kt').textContent=fN(t);
+  document.getElementById('ftth-kb').textContent=fN(Math.round(b+FTTH_BK))+' km';
+  document.getElementById('ftth-kx').textContent=fP(c,p);
+}
+function ftthBar(data){
+  var maxV=Math.max(...data.map(d=>d.passad),1),H=180,html='';
+  data.forEach(d=>{
+    var h1=d.passad>0?Math.max((d.passad/maxV)*H,3):0;
+    var h2=d.connect>0?Math.max((d.connect/maxV)*H,3):0;
+    var lbl=d.cidade.split(' ')[0];
+    html+='<div class="ftth-vg"><div class="ftth-vg-inner">'
+      +'<div class="ftth-vb-wrap"><div class="ftth-vb-num">'+fK(d.passad)+'</div><div class="ftth-vbar" style="height:'+h1+'px;background:#1a56db"></div></div>'
+      +'<div class="ftth-vb-wrap"><div class="ftth-vb-num">'+fK(d.connect)+'</div><div class="ftth-vbar" style="height:'+h2+'px;background:#16a34a"></div></div>'
+      +'</div><div class="ftth-vb-lbl" title="'+d.cidade+'">'+lbl+'</div></div>';
+  });
+  document.getElementById('ftth-bpc').innerHTML=html;
+}
+function ftthDonut(data){
+  var tot=fS(data,'connect'),cx=70,cy=70,R=58,r=38;
+  var svg='<svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="#e8eaf0"/>'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#fff"/>';
+  if(tot>0){
+    var ang=-90;
+    data.forEach((d,i)=>{
+      if(!d.connect)return;
+      var sweep=(d.connect/tot)*360,e=ang+sweep;
+      var f=a=>[cx+R*Math.cos(a*Math.PI/180),cy+R*Math.sin(a*Math.PI/180)];
+      var g=a=>[cx+r*Math.cos(a*Math.PI/180),cy+r*Math.sin(a*Math.PI/180)];
+      var [x1,y1]=f(ang),[x2,y2]=f(e),[xi1,yi1]=g(ang),[xi2,yi2]=g(e),lg=sweep>180?1:0;
+      svg+='<path d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+' A'+R+' '+R+' 0 '+lg+' 1 '+x2.toFixed(2)+' '+y2.toFixed(2)
+        +' L'+xi2.toFixed(2)+' '+yi2.toFixed(2)+' A'+r+' '+r+' 0 '+lg+' 0 '+xi1.toFixed(2)+' '+yi1.toFixed(2)+'Z" fill="'+FTTH_COR[i]+'"/>';
+      ang=e;
+    });
+  }
+  svg+='<text x="'+cx+'" y="'+(cy-3)+'" text-anchor="middle" fill="#111" font-size="12" font-weight="bold" font-family="Segoe UI,Arial">'+fK(tot)+'</text>'
+    +'<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" fill="#6b7280" font-size="5.5" font-family="Segoe UI,Arial">HomeConnect</text></svg>';
+  var leg='';
+  data.forEach((d,i)=>{
+    var p=tot>0?((d.connect/tot)*100).toFixed(1):'0.0';
+    leg+='<div class="donut-li"><div class="donut-ld" style="background:'+FTTH_COR[i]+'"></div>'
+      +'<div><div class="donut-lt">'+d.cidade.split(' ')[0]+'</div><div class="donut-lv">'+fN(d.connect)+' ('+p+'%)</div></div></div>';
+  });
+  document.getElementById('ftth-dw').innerHTML=svg+'<div class="donut-leg">'+leg+'</div>';
+}
+function ftthOcup(data){
+  var html='';
+  data.forEach(d=>{
+    var oc=d.passad>0?(d.connect/d.passad)*100:0,vg=100-oc;
+    var lbl=d.cidade.length>12?d.cidade.split(' ')[0]:d.cidade;
+    html+='<div class="oc-row"><div class="oc-label" title="'+d.cidade+'">'+lbl+'</div>'
+      +'<div class="oc-track">'
+      +'<div class="oc-seg" style="width:'+oc.toFixed(1)+'%;background:#16a34a;">'+(oc>=14?oc.toFixed(0)+'%':'')+'</div>'
+      +'<div class="oc-seg" style="width:'+vg.toFixed(1)+'%;background:#dc2626;">'+(vg>=14?vg.toFixed(0)+'%':'')+'</div>'
+      +'</div><div class="oc-pct">'+oc.toFixed(1)+'%</div></div>';
+  });
+  document.getElementById('ftth-oc').innerHTML=html;
+}
+function ftthMeta(data){
+  var maxV=Math.max(...data.flatMap(d=>[d.passad,d.meta]),1),html='';
+  data.forEach(d=>{
+    var p1=(d.passad/maxV)*100,p2=(d.meta/maxV)*100;
+    var lbl=d.cidade.length>12?d.cidade.split(' ')[0]:d.cidade;
+    html+='<div class="meta-row"><div class="meta-head"><span class="meta-city">'+lbl+'</span><span class="meta-pct">'+fP(d.passad,d.meta)+' da meta</span></div>'
+      +'<div class="meta-track"><div class="meta-fill" style="width:'+p1.toFixed(1)+'%"></div><div class="meta-line" style="left:'+p2.toFixed(1)+'%"></div></div></div>';
+  });
+  document.getElementById('ftth-mc').innerHTML=html;
+}
+function ftthProg(data){
+  var html='';
+  data.forEach(d=>{
+    var raw=d.meta>0?(d.passad/d.meta)*100:0,fill=Math.min(raw,100);
+    var clr=raw>=100?'#16a34a':raw>=60?'#f59e0b':'#dc2626';
+    var cls=raw>=100?'prog-ok':raw>=60?'prog-wn':'prog-lw';
+    html+='<div class="prog-row"><div class="prog-city">'+d.cidade+'</div>'
+      +'<div class="prog-track"><div class="prog-fill" style="width:'+fill.toFixed(1)+'%;background:'+clr+'"></div></div>'
+      +'<div class="prog-pct">'+raw.toFixed(1)+'%</div>'
+      +'<div class="prog-badge '+cls+'">'+(raw>=100?'ATINGIDO':'EM PROG.')+'</div></div>';
+  });
+  document.getElementById('ftth-pg').innerHTML=html;
+}
+function ftthTable(data){
+  var html='';
+  data.forEach(d=>{
+    var ok=d.meta>0&&d.passad>=d.meta;
+    html+='<tr><td>'+d.cidade+'</td>'
+      +'<td class="center">'+fN(d.passad)+'</td><td class="center">'+fN(d.connect)+'</td><td class="center">'+fN(d.passad-d.connect)+'</td>'
+      +'<td class="center">'+(d.cto>0?fN(d.cto):'—')+'</td><td class="center">'+(d.bk>0?d.bk.toFixed(2)+' km':'—')+'</td>'
+      +'<td class="center">'+fN(d.ibge)+'</td><td class="center">'+fN(d.meta)+'</td>'
+      +'<td class="center ftth-tp">'+fP(d.connect,d.passad)+'</td><td class="center ftth-tp">'+fP(d.passad,d.meta)+'</td>'
+      +'<td class="center '+(ok?'ftth-tok':'ftth-tno')+'">'+(ok?'✔ ATINGIDO':'⏳ Em prog.')+'</td></tr>';
+  });
+  var p=fS(data,'passad'),c=fS(data,'connect'),t=fS(data,'cto')||FTTH_CTO,b=fS(data,'bk'),ib=fS(data,'ibge'),m=fS(data,'meta');
+  html+='<tr class="ftth-total"><td>TOTAL</td>'
+    +'<td class="center">'+fN(p)+'</td><td class="center">'+fN(c)+'</td><td class="center">'+fN(p-c)+'</td>'
+    +'<td class="center">'+fN(t)+'</td><td class="center">'+(b+FTTH_BK).toFixed(2)+' km</td>'
+    +'<td class="center">'+fN(ib)+'</td><td class="center">'+fN(m)+'</td>'
+    +'<td class="center ftth-tp">'+fP(c,p)+'</td><td class="center ftth-tp">'+fP(p,m)+'</td><td class="center">—</td></tr>';
+  document.getElementById('ftth-tb').innerHTML=html;
+}
+document.getElementById('ftth-fi').addEventListener('change',function(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    if(typeof XLSX==='undefined'){
+      var s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload=()=>ftthParseXL(ev.target.result,file.name);document.head.appendChild(s);
+    }else{ftthParseXL(ev.target.result,file.name);}
+  };
+  reader.readAsArrayBuffer(file);
+});
+function ftthParseXL(buf,fname){
+  try{
+    var wb=XLSX.read(new Uint8Array(buf),{type:'array'});
+    var ws=wb.Sheets[wb.SheetNames.indexOf('DADOS')>=0?'DADOS':wb.SheetNames[0]];
+    FTTH_D=XLSX.utils.sheet_to_json(ws,{defval:0}).filter(r=>r['CIDADE']&&String(r['CIDADE']).toUpperCase()!=='TOTAL')
+      .map(r=>({cidade:String(r['CIDADE']).trim(),passad:Number(r['HOME_PASSAD'])||0,connect:Number(r['HOME_CONNECT'])||0,
+        cto:Number(r['CAIXAS_CTO'])||0,bk:Number(r['CABO_BK_KM'])||0,ibge:Number(r['DOMICILIOS_IBGE'])||0,meta:Number(r['META_80PCT'])||0}));
+    document.getElementById('ftth-lu').textContent='Atualizado: '+fname+' — '+new Date().toLocaleString('pt-BR');
+    var sel=document.getElementById('ftth-cf');
+    sel.innerHTML='<option value="TODAS">Todas as cidades</option>';
+    FTTH_D.forEach(d=>{var o=document.createElement('option');o.value=d.cidade;o.textContent=d.cidade;sel.appendChild(o);});
+    ftthApplyFilter();
+  }catch(e){showToast('Erro ao ler Excel: '+e.message,'error');}
+}
+
+/* ════════════════════════════════════════
+   EQUATORIAL — Supabase
+════════════════════════════════════════ */
+const EQ_URL='https://gvydcumpsstixinqyn.supabase.co';
+const EQ_KEY='sb_publishable_9w3keSG__NMzod4pwK6g5w_c3Xv32o2';
+const EQ_TABLE='projetos_equatorial';
+const EQ_PRECO=6.28;
+let eqDB=null,eqDados=[],eqChart=null;
+async function eqInit(){const{createClient}=window.supabase;eqDB=createClient(EQ_URL,EQ_KEY);await eqCarregar();}
+async function eqCarregar(){
+  const{data,error}=await eqDB.from(EQ_TABLE).select('*').order('created_at',{ascending:false});
+  if(error){showToast('Erro Supabase: '+error.message,'error');document.getElementById('eq-tabelaContainer').innerHTML='<div style="text-align:center;padding:40px;color:#dc2626;">Erro ao carregar dados.<br><small>'+error.message+'</small></div>';return;}
+  eqDados=data||[];eqCards();eqGrafico();eqRanking();eqRenderTabela(eqDados);eqFiltrosMun();
+}
+function eqC(r){return((r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0))*EQ_PRECO;}
+function eBRL(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function eF(n){return(n||0).toLocaleString('pt-BR');}
+function eqCards(){
+  var novos=eqDados.reduce((s,r)=>s+(r.qtd_pontos_novos||0),0);
+  var exist=eqDados.reduce((s,r)=>s+(r.qtd_pontos_existentes||0),0);
+  var muns=new Set(eqDados.map(r=>r.municipio)).size;
+  var custo=eqDados.reduce((s,r)=>s+eqC(r),0);
+  document.getElementById('eq-cTotal').textContent=eqDados.length;
+  document.getElementById('eq-cNovos').textContent=eF(novos);
+  document.getElementById('eq-cExist').textContent=eF(exist);
+  document.getElementById('eq-cTotal2').textContent=eF(novos+exist);
+  document.getElementById('eq-cMun').textContent=muns;
+  document.getElementById('eq-cCusto').textContent=eBRL(custo);
+}
+function eqGrafico(){
+  var agr={};
+  eqDados.forEach(r=>{agr[r.municipio]=(agr[r.municipio]||0)+(r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0);});
+  var sorted=Object.entries(agr).sort((a,b)=>b[1]-a[1]);
+  var cores=['#1a56db','#16a34a','#ff5c00','#7c3aed','#dc2626','#0891b2','#f59e0b','#374151','#9333ea','#0f766e'];
+  if(eqChart)eqChart.destroy();
+  eqChart=new Chart(document.getElementById('eq-grafico').getContext('2d'),{
+    type:'bar',
+    data:{labels:sorted.map(e=>e[0]),datasets:[{label:'Total de Pontos',data:sorted.map(e=>e[1]),
+      backgroundColor:sorted.map((_,i)=>cores[i%cores.length]+'bb'),
+      borderColor:sorted.map((_,i)=>cores[i%cores.length]),borderWidth:1,borderRadius:5}]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true,grid:{color:'#f1f3f7'},ticks:{font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}}
+  });
+}
+function eqRanking(){
+  var agr={};
+  eqDados.forEach(r=>{var pts=(r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0);if(!agr[r.municipio])agr[r.municipio]={pts:0,custo:0};agr[r.municipio].pts+=pts;agr[r.municipio].custo+=pts*EQ_PRECO;});
+  var sorted=Object.entries(agr).sort((a,b)=>b[1].pts-a[1].pts);
+  var max=sorted[0]?.[1].pts||1;
+  document.getElementById('eq-ranking').innerHTML=sorted.map(([m,v])=>`
+    <div class="ranking-item">
+      <span style="min-width:95px;font-size:11px;font-weight:600">${m}</span>
+      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${(v.pts/max*100).toFixed(1)}%"></div></div>
+      <span style="font-size:11px;color:#555;min-width:55px;text-align:right">${eF(v.pts)} pts</span>
+      <span style="font-size:11px;color:#ff5c00;font-weight:700;min-width:80px;text-align:right;margin-left:6px">${eBRL(v.custo)}</span>
+    </div>`).join('');
+}
+function eqRenderTabela(lista){
+  var el=document.getElementById('eq-tabelaContainer');
+  if(!lista.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#94a3b8;">Nenhum projeto encontrado.</div>';return;}
+  el.innerHTML=`<div class="table-scroll"><table class="eq-table">
+    <thead><tr><th>#</th><th>Nº Protocolo</th><th>Município</th><th class="num">Pt. Novos</th><th class="num">Pt. Exist.</th><th class="num">Total</th><th class="num">Custo (R$)</th><th>Status</th><th>Data Aprov.</th><th>Obs</th><th>Ações</th></tr></thead>
+    <tbody>${lista.map((r,i)=>`<tr>
+      <td style="color:#ccc;font-size:11px">${i+1}</td>
+      <td style="font-family:monospace;font-size:11px">${r.protocolo}</td>
+      <td><span class="eq-mun-badge">${r.municipio}</span></td>
+      <td class="num" style="font-weight:700;color:#1a56db">${eF(r.qtd_pontos_novos)}</td>
+      <td class="num" style="color:#666">${eF(r.qtd_pontos_existentes)}</td>
+      <td class="num" style="font-weight:700">${eF((r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0))}</td>
+      <td class="num" style="font-weight:700;color:#ff5c00">${eBRL(eqC(r))}</td>
+      <td>${eqBadge(r.status)}</td>
+      <td style="color:#888;font-size:11px">${r.data_aprovacao?new Date(r.data_aprovacao+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</td>
+      <td style="color:#999;font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.observacoes||''}">${r.observacoes||'—'}</td>
+      <td><button class="btn-sm btn-edit" onclick="eqEditar(${r.id})">Editar</button><button class="btn-sm btn-delete" onclick="eqExcluir(${r.id})">Excluir</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div>
+  <div class="table-footer">${lista.length} projeto(s) &bull; ${eF(lista.reduce((s,r)=>s+(r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0),0))} pontos &bull; Custo: <strong style="color:#ff5c00">${eBRL(lista.reduce((s,r)=>s+eqC(r),0))}</strong></div>`;
+}
+function eqBadge(s){
+  var m={'APROVADO':['#dcfce7','#166534'],'EM ANÁLISE':['#fef9c3','#854d0e'],'EM EXECUÇÃO':['#dbeafe','#1e40af'],'CONCLUÍDO':['#f3e8ff','#6b21a8']};
+  var [bg,color]=m[s]||['#f1f5f9','#64748b'];
+  return`<span class="status-badge" style="background:${bg};color:${color}">${s||'—'}</span>`;
+}
+function eqFiltrosMun(){
+  var sel=document.getElementById('eq-filtroMun');
+  sel.innerHTML='<option value="">Todos os municípios</option>'+[...new Set(eqDados.map(r=>r.municipio))].sort().map(m=>`<option>${m}</option>`).join('');
+}
+function eqFiltrar(){
+  var busca=document.getElementById('eq-busca').value.toLowerCase();
+  var mun=document.getElementById('eq-filtroMun').value;
+  var status=document.getElementById('eq-filtroStatus').value;
+  eqRenderTabela(eqDados.filter(r=>(!busca||(r.protocolo.toLowerCase().includes(busca)||r.municipio.toLowerCase().includes(busca)))&&(!mun||r.municipio===mun)&&(!status||r.status===status)));
+}
+function eqAbrirModal(r=null){
+  document.getElementById('eq-modalTitulo').textContent=r?'Editar Projeto':'Novo Projeto';
+  document.getElementById('eq-fId').value=r?.id||'';
+  document.getElementById('eq-fProtocolo').value=r?.protocolo||'';
+  document.getElementById('eq-fMunicipio').value=r?.municipio||'';
+  document.getElementById('eq-fNovos').value=r?.qtd_pontos_novos??'';
+  document.getElementById('eq-fExist').value=r?.qtd_pontos_existentes??'';
+  document.getElementById('eq-fStatus').value=r?.status||'APROVADO';
+  document.getElementById('eq-fData').value=r?.data_aprovacao||'';
+  document.getElementById('eq-fObs').value=r?.observacoes||'';
+  document.getElementById('eq-overlay').classList.add('open');
+}
+function eqFecharModal(){document.getElementById('eq-overlay').classList.remove('open');}
+document.getElementById('eq-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)eqFecharModal();});
+async function eqSalvar(){
+  var id=document.getElementById('eq-fId').value;
+  var protocolo=document.getElementById('eq-fProtocolo').value.trim();
+  var municipio=document.getElementById('eq-fMunicipio').value.trim().toUpperCase();
+  var novos=parseInt(document.getElementById('eq-fNovos').value)||0;
+  var exist=parseInt(document.getElementById('eq-fExist').value)||0;
+  var status=document.getElementById('eq-fStatus').value;
+  var data_aprov=document.getElementById('eq-fData').value||null;
+  var obs=document.getElementById('eq-fObs').value.trim()||null;
+  if(!protocolo||!municipio){showToast('Protocolo e município são obrigatórios.','error');return;}
+  var payload={protocolo,municipio,qtd_pontos_novos:novos,qtd_pontos_existentes:exist,status,data_aprovacao:data_aprov,observacoes:obs};
+  var error;
+  if(id){({error}=await eqDB.from(EQ_TABLE).update(payload).eq('id',id));}
+  else{({error}=await eqDB.from(EQ_TABLE).insert([payload]));}
+  if(error){showToast('Erro: '+error.message,'error');return;}
+  showToast(id?'Projeto atualizado!':'Projeto cadastrado!','success');
+  eqFecharModal();await eqCarregar();
+}
+function eqEditar(id){var r=eqDados.find(x=>x.id===id);if(r)eqAbrirModal(r);}
+async function eqExcluir(id){
+  if(!confirm('Deseja excluir este projeto?'))return;
+  var{error}=await eqDB.from(EQ_TABLE).delete().eq('id',id);
+  if(error){showToast('Erro ao excluir: '+error.message,'error');return;}
+  showToast('Projeto excluído.','info');await eqCarregar();
+}
+
+/* ════════════════════════════════════════
+   INVENTÁRIO — Chart.js
+════════════════════════════════════════ */
+function invInitCharts(){
+  Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
+  Chart.defaults.font.size=11;
+  const FMT=v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+  const opH={indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+FMT(ctx.parsed.x)}}},
+    scales:{x:{ticks:{callback:v=>'R$ '+(v/1e6).toFixed(1)+'M'},grid:{color:'#f1f3f7'}},y:{grid:{display:false}}}};
+  new Chart(document.getElementById('inv-chartCategoria'),{
+    type:'doughnut',
+    data:{labels:['ATIVO REDE','ATIVO ELETRICO','ESTRUTURA','PASSIVO ELETRICO','PASSIVO OPTICO'],
+      datasets:[{data:[3363002.67,359774.24,342581.20,313130.44,129947.99],
+        backgroundColor:['#1a56db','#ff5c00','#64748b','#16a34a','#7c3aed'],borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
+    options:{cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:12,padding:12}},
+      tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+FMT(ctx.parsed)+' ('+(ctx.parsed/4508436.54*100).toFixed(1)+'%)'}}}}
+  });
+  new Chart(document.getElementById('inv-chartCidade'),{
+    type:'bar',
+    data:{labels:['SANTARÉM','ALTAMIRA','ITAITUBA','URUARÁ','RURÓPOLIS','MEDICILÂNDIA','BELTERRA','BRASIL NOVO','MOJUÍ','PLACAS'],
+      datasets:[{label:'Valor (R$)',data:[1907394.96,1150557.90,600542.19,174278.62,169806.40,148469.01,124622.38,91554.23,84740.92,56469.93],
+        backgroundColor:['#1a56db','#0891b2','#ff5c00','#16a34a','#7c3aed','#dc2626','#d97706','#0f766e','#64748b','#94a3b8'],borderRadius:6,borderSkipped:false}]},
+    options:opH
+  });
+  new Chart(document.getElementById('inv-chartFabricante'),{
+    type:'bar',
+    data:{labels:['HUAWEI','ZTE','INFRAESTRUTURA','XPS','UNIÃO','MOURA','FIBRACEM','MIKROTIK'],
+      datasets:[{label:'Valor (R$)',data:[2153252.59,981562.78,273405.00,225037.14,204765.00,131902.60,109793.70,79353.20],
+        backgroundColor:'#111',borderRadius:5,borderSkipped:false}]},
+    options:opH
+  });
+  new Chart(document.getElementById('inv-chartTipo'),{
+    type:'bar',
+    data:{labels:['PLACA GPON','OLT','SWITCH','NE8000','RACK','FONTE RETIF.','BATERIA CHUMBO','PARTE ELET. POP'],
+      datasets:[{label:'Valor (R$)',data:[1234563.54,1083823.34,374801.21,327271.80,315581.20,250432.21,166972.60,150000.00],
+        backgroundColor:['#1a56db','#0891b2','#ff5c00','#7c3aed','#16a34a','#dc2626','#d97706','#0f766e'],borderRadius:5,borderSkipped:false}]},
+    options:opH
+  });
+  new Chart(document.getElementById('inv-chartPOP'),{
+    type:'bar',
+    data:{labels:['POP TRANSPORTE','POP02','DATA CENTER','POP01','POP04','POP03','POP05','POP06','POP07','CPD'],
+      datasets:[{label:'Valor (R$)',data:[680504.65,655186.16,627114.02,444540.91,378652.20,237167.97,236617.93,189714.14,164670.73,163717.74],
+        backgroundColor:'#0891b2',borderRadius:5,borderSkipped:false}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+FMT(ctx.parsed.y)}}},
+      scales:{y:{ticks:{callback:v=>'R$ '+(v/1e3).toFixed(0)+'K'},grid:{color:'#f1f3f7'}},x:{grid:{display:false},ticks:{maxRotation:30}}}}
+  });
+  new Chart(document.getElementById('inv-chartSFP'),{
+    type:'doughnut',
+    data:{labels:['DUPLEX (85 itens)','BIDI (63 itens)'],
+      datasets:[{data:[121895.72,50281.28],backgroundColor:['#7c3aed','#ff5c00'],borderWidth:3,borderColor:'#fff',hoverOffset:8}]},
+    options:{cutout:'55%',plugins:{legend:{position:'bottom',labels:{boxWidth:12}},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+FMT(ctx.parsed)}}}}
+  });
+}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+function showToast(msg,tipo='info'){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast '+tipo+' visible';
+  setTimeout(()=>el.className='toast',3200);
+}
+document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('pt-BR');
+</script>
+</body>
+</html>
