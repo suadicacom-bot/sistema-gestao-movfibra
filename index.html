@@ -692,147 +692,119 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <div id="tab-inventario" class="tab-content">
 <div class="container">
 
+  <!-- KPIs dinâmicos -->
   <div class="section-title">Indicadores Gerais do Inventário</div>
   <div class="kpi-row kpi-row-4" style="margin-bottom:24px;">
-    <div class="kpi-card blue"><div class="kpi-icon">📦</div><div class="kpi-label">Total Itens — BASE</div><div class="kpi-value">528</div><div class="kpi-sub">equipamentos cadastrados</div></div>
-    <div class="kpi-card navy"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — BASE</div><div class="kpi-value">R$ 4,51M</div><div class="kpi-sub">R$ 4.508.436,54</div></div>
-    <div class="kpi-card orange"><div class="kpi-icon">🔌</div><div class="kpi-label">Total Itens — SFP</div><div class="kpi-value">148</div><div class="kpi-sub">módulos ópticos</div></div>
-    <div class="kpi-card purple"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — SFP</div><div class="kpi-value">R$ 172K</div><div class="kpi-sub">R$ 172.177,00</div></div>
-    <div class="kpi-card green"><div class="kpi-icon">📡</div><div class="kpi-label">Total Geral (BASE+SFP)</div><div class="kpi-value">676</div><div class="kpi-sub">itens no inventário</div></div>
-    <div class="kpi-card teal"><div class="kpi-icon">💎</div><div class="kpi-label">Valor Total Geral</div><div class="kpi-value">R$ 4,68M</div><div class="kpi-sub">R$ 4.680.613,54</div></div>
-    <div class="kpi-card orange"><div class="kpi-icon">🏙️</div><div class="kpi-label">Cidades Atendidas</div><div class="kpi-value">10</div><div class="kpi-sub">municípios com ativos</div></div>
-    <div class="kpi-card blue"><div class="kpi-icon">🗼</div><div class="kpi-label">POPs (Hostnames)</div><div class="kpi-value">38</div><div class="kpi-sub">pontos de presença únicos</div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">📦</div><div class="kpi-label">Total Itens — BASE</div><div class="kpi-value" id="inv-kpi-qtdBase">—</div><div class="kpi-sub" id="inv-kpi-qtdBaseSub">carregando...</div></div>
+    <div class="kpi-card navy"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — BASE</div><div class="kpi-value" id="inv-kpi-valBase">—</div><div class="kpi-sub" id="inv-kpi-valBaseSub"></div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">🔌</div><div class="kpi-label">Total Itens — SFP</div><div class="kpi-value" id="inv-kpi-qtdSfp">—</div><div class="kpi-sub" id="inv-kpi-qtdSfpSub">módulos ópticos</div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">💰</div><div class="kpi-label">Valor Total — SFP</div><div class="kpi-value" id="inv-kpi-valSfp">—</div><div class="kpi-sub" id="inv-kpi-valSfpSub"></div></div>
+    <div class="kpi-card green"><div class="kpi-icon">📡</div><div class="kpi-label">Total Geral (BASE+SFP)</div><div class="kpi-value" id="inv-kpi-total">—</div><div class="kpi-sub">itens no inventário</div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">💎</div><div class="kpi-label">Valor Total Geral</div><div class="kpi-value" id="inv-kpi-valTotal">—</div><div class="kpi-sub" id="inv-kpi-valTotalSub"></div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">🏙️</div><div class="kpi-label">Cidades Atendidas</div><div class="kpi-value" id="inv-kpi-cidades">—</div><div class="kpi-sub">municípios com ativos</div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">🗼</div><div class="kpi-label">POPs (Hostnames)</div><div class="kpi-value" id="inv-kpi-pops">—</div><div class="kpi-sub">pontos de presença únicos</div></div>
   </div>
 
-  <div class="section-title">Por Categoria e Cidade</div>
-  <div class="grid-2" style="margin-bottom:16px;">
-    <div class="panel">
-      <h3>Distribuição por Categoria</h3>
-      <div class="sub">participação no valor total do inventário BASE</div>
-      <canvas id="inv-chartCategoria" height="220"></canvas>
-    </div>
-    <div class="panel">
-      <h3>Valor por Cidade</h3>
-      <div class="sub">top 10 municípios — base de equipamentos (R$)</div>
-      <canvas id="inv-chartCidade" height="220"></canvas>
-    </div>
+  <!-- Filtros + botão novo -->
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+    <div class="section-title" style="margin:0;flex:1">Lista de Equipamentos</div>
+    <input id="inv-busca" type="text" placeholder="Buscar tipo, fabricante, POP..." oninput="invFiltrar()"
+      style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;width:220px;background:var(--surface);color:var(--text)">
+    <select id="inv-fCategoria" onchange="invFiltrar()"
+      style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
+      <option value="">Todas as categorias</option>
+      <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
+      <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option><option>SFP</option>
+    </select>
+    <select id="inv-fCidade" onchange="invFiltrar()"
+      style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
+      <option value="">Todas as cidades</option>
+      <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
+      <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
+      <option>BRASIL NOVO</option><option>MOJUÍ</option><option>PLACAS</option>
+    </select>
+    <button class="btn-upload" style="background:#ff5c00;color:#fff;border:none;cursor:pointer;padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;" onclick="invAbrirModal()">+ Novo Equipamento</button>
   </div>
 
-  <div class="section-title">Resumo por Categoria</div>
-  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:16px;">
-    <table class="data-table">
-      <thead><tr><th>Categoria</th><th class="center">Qtd Itens</th><th class="right">Valor Total (R$)</th><th class="right">% do Total</th><th class="center">Participação</th></tr></thead>
-      <tbody>
-        <tr><td><span class="badge badge-blue">ATIVO REDE</span></td><td class="center">206</td><td class="right">3.363.002,67</td><td class="right"><strong>74,6%</strong></td><td><div class="bar-track"><div class="bar-fill" style="width:74.6%;background:#1a56db"></div></div></td></tr>
-        <tr><td><span class="badge badge-orange">ATIVO ELETRICO</span></td><td class="center">75</td><td class="right">359.774,24</td><td class="right">8,0%</td><td><div class="bar-track"><div class="bar-fill" style="width:8%;background:#f97316"></div></div></td></tr>
-        <tr><td><span class="badge badge-gray">ESTRUTURA</span></td><td class="center">29</td><td class="right">342.581,20</td><td class="right">7,6%</td><td><div class="bar-track"><div class="bar-fill" style="width:7.6%;background:#64748b"></div></div></td></tr>
-        <tr><td><span class="badge badge-green">PASSIVO ELETRICO</span></td><td class="center">168</td><td class="right">313.130,44</td><td class="right">6,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:6.9%;background:#16a34a"></div></div></td></tr>
-        <tr><td><span class="badge badge-purple">PASSIVO OPTICO</span></td><td class="center">50</td><td class="right">129.947,99</td><td class="right">2,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:2.9%;background:#7c3aed"></div></div></td></tr>
+  <!-- Tabela de equipamentos -->
+  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:24px;">
+    <table class="data-table" id="inv-tabela">
+      <thead>
+        <tr>
+          <th>Tipo de Equipamento</th>
+          <th>Categoria</th>
+          <th>Inventário</th>
+          <th>Fabricante</th>
+          <th>Cidade</th>
+          <th>POP / Hostname</th>
+          <th class="center">Qtd</th>
+          <th class="right">Vlr. Unit.</th>
+          <th class="right">Vlr. Total</th>
+          <th class="center">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="inv-tbody">
+        <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:32px">Carregando equipamentos...</td></tr>
       </tbody>
-      <tfoot><tr><td><strong>TOTAL</strong></td><td class="center"><strong>528</strong></td><td class="right"><strong>4.508.436,54</strong></td><td class="right"><strong>100%</strong></td><td></td></tr></tfoot>
     </table>
   </div>
 
-  <div class="section-title">Por Fabricante e Tipo de Equipamento</div>
-  <div class="grid-2" style="margin-bottom:16px;">
-    <div class="panel">
-      <h3>Top 8 Fabricantes por Valor (R$)</h3>
-      <div class="sub">participação financeira no inventário BASE</div>
-      <canvas id="inv-chartFabricante" height="240"></canvas>
-    </div>
-    <div class="panel">
-      <h3>Top 8 Tipos de Equipamento</h3>
-      <div class="sub">ranking por valor patrimonial (R$)</div>
-      <canvas id="inv-chartTipo" height="240"></canvas>
-    </div>
-  </div>
-
-  <div class="grid-2" style="margin-bottom:16px;">
-    <div class="panel" style="padding:0;overflow:hidden;">
-      <table class="data-table">
-        <thead><tr><th>Fabricante</th><th class="center">Itens</th><th class="right">Valor (R$)</th><th class="right">% Valor</th></tr></thead>
-        <tbody>
-          <tr><td>HUAWEI</td><td class="center">116</td><td class="right">2.153.252,59</td><td class="right"><strong>47,8%</strong></td></tr>
-          <tr><td>ZTE</td><td class="center">51</td><td class="right">981.562,78</td><td class="right">21,8%</td></tr>
-          <tr><td>INFRAESTRUTURA</td><td class="center">40</td><td class="right">273.405,00</td><td class="right">6,1%</td></tr>
-          <tr><td>XPS</td><td class="center">33</td><td class="right">225.037,14</td><td class="right">5,0%</td></tr>
-          <tr><td>UNIÃO</td><td class="center">17</td><td class="right">204.765,00</td><td class="right">4,5%</td></tr>
-          <tr><td>MOURA</td><td class="center">114</td><td class="right">131.902,60</td><td class="right">2,9%</td></tr>
-          <tr><td>FIBRACEM</td><td class="center">45</td><td class="right">109.793,70</td><td class="right">2,4%</td></tr>
-          <tr><td>MIKROTIK</td><td class="center">12</td><td class="right">79.353,20</td><td class="right">1,8%</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="panel" style="padding:0;overflow:hidden;">
-      <table class="data-table">
-        <thead><tr><th>Tipo de Equipamento</th><th class="center">Itens</th><th class="right">Valor (R$)</th><th class="right">% Valor</th></tr></thead>
-        <tbody>
-          <tr><td>PLACA GPON</td><td class="center">80</td><td class="right">1.234.563,54</td><td class="right"><strong>27,4%</strong></td></tr>
-          <tr><td>OLT</td><td class="center">31</td><td class="right">1.083.823,34</td><td class="right">24,0%</td></tr>
-          <tr><td>SWITCH</td><td class="center">28</td><td class="right">374.801,21</td><td class="right">8,3%</td></tr>
-          <tr><td>NE8000</td><td class="center">4</td><td class="right">327.271,80</td><td class="right">7,3%</td></tr>
-          <tr><td>RACK</td><td class="center">27</td><td class="right">315.581,20</td><td class="right">7,0%</td></tr>
-          <tr><td>FONTE RETIFICADORA</td><td class="center">42</td><td class="right">250.432,21</td><td class="right">5,6%</td></tr>
-          <tr><td>BATERIA DE CHUMBO</td><td class="center">156</td><td class="right">166.972,60</td><td class="right">3,7%</td></tr>
-          <tr><td>PARTE ELETRICA POP</td><td class="center">30</td><td class="right">150.000,00</td><td class="right">3,3%</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="section-title">Por POP e Módulos SFP</div>
-  <div class="grid-32" style="margin-bottom:16px;">
-    <div class="panel">
-      <h3>Top 10 POPs por Valor Patrimonial (R$)</h3>
-      <div class="sub">distribuição de ativos por ponto de presença</div>
-      <canvas id="inv-chartPOP" height="220"></canvas>
-    </div>
-    <div class="panel">
-      <h3>SFP — Módulos Ópticos</h3>
-      <div class="sub">distribuição BIDI vs DUPLEX</div>
-      <div style="display:flex;justify-content:center;">
-        <canvas id="inv-chartSFP" height="200" width="200"></canvas>
-      </div>
-      <div style="margin-top:16px;">
-        <div class="bar-row">
-          <div class="bar-label">🔵 DUPLEX (40G LR4)</div>
-          <div class="bar-track"><div class="bar-fill" style="width:57.4%;background:#7c3aed"></div></div>
-          <div class="bar-val">85 itens — R$ 121.896</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">🟠 BIDI</div>
-          <div class="bar-track"><div class="bar-fill" style="width:42.6%;background:#ff5c00"></div></div>
-          <div class="bar-val">63 itens — R$ 50.281</div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;">Total: 148 itens &nbsp;|&nbsp; Valor: R$ 172.177</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">Detalhe por Cidade</div>
-  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:16px;">
-    <table class="data-table">
-      <thead><tr><th>Cidade</th><th class="center">Qtd Itens</th><th class="right">Valor (R$)</th><th class="right">% do Total</th><th class="center">Participação Visual</th></tr></thead>
-      <tbody>
-        <tr><td><strong>SANTARÉM</strong></td><td class="center">186</td><td class="right">1.907.394,96</td><td class="right"><strong>42,3%</strong></td><td><div class="bar-track"><div class="bar-fill" style="width:42.3%;background:#1a56db"></div></div></td></tr>
-        <tr><td>ALTAMIRA</td><td class="center">137</td><td class="right">1.150.557,90</td><td class="right">25,5%</td><td><div class="bar-track"><div class="bar-fill" style="width:25.5%;background:#0891b2"></div></div></td></tr>
-        <tr><td>ITAITUBA</td><td class="center">66</td><td class="right">600.542,19</td><td class="right">13,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:13.3%;background:#ff5c00"></div></div></td></tr>
-        <tr><td>URUARÁ</td><td class="center">20</td><td class="right">174.278,62</td><td class="right">3,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.9%;background:#16a34a"></div></div></td></tr>
-        <tr><td>RURÓPOLIS</td><td class="center">31</td><td class="right">169.806,40</td><td class="right">3,8%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.8%;background:#7c3aed"></div></div></td></tr>
-        <tr><td>MEDICILÂNDIA</td><td class="center">37</td><td class="right">148.469,01</td><td class="right">3,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:3.3%;background:#dc2626"></div></div></td></tr>
-        <tr><td>BELTERRA</td><td class="center">16</td><td class="right">124.622,38</td><td class="right">2,8%</td><td><div class="bar-track"><div class="bar-fill" style="width:2.8%;background:#d97706"></div></div></td></tr>
-        <tr><td>BRASIL NOVO</td><td class="center">15</td><td class="right">91.554,23</td><td class="right">2,0%</td><td><div class="bar-track"><div class="bar-fill" style="width:2%;background:#0f766e"></div></div></td></tr>
-        <tr><td>MOJUÍ</td><td class="center">7</td><td class="right">84.740,92</td><td class="right">1,9%</td><td><div class="bar-track"><div class="bar-fill" style="width:1.9%;background:#64748b"></div></div></td></tr>
-        <tr><td>PLACAS</td><td class="center">13</td><td class="right">56.469,93</td><td class="right">1,3%</td><td><div class="bar-track"><div class="bar-fill" style="width:1.3%;background:#94a3b8"></div></div></td></tr>
-      </tbody>
-      <tfoot><tr><td><strong>TOTAL</strong></td><td class="center"><strong>528</strong></td><td class="right"><strong>4.508.436,54</strong></td><td class="right"><strong>100%</strong></td><td></td></tr></tfoot>
-    </table>
-  </div>
-
-  <div style="text-align:center;font-size:11px;color:var(--muted);padding:20px 0 8px;border-top:1px solid var(--border);margin-top:16px;">
-    MOV FIBRA — Sistema de Gestão &nbsp;|&nbsp; Inventario_Equipamentos_Infraestrutura.xlsx &nbsp;|&nbsp; 21/05/2026
-  </div>
 </div>
+</div>
+
+<!-- ═══ MODAL INVENTÁRIO ═══ -->
+<div class="overlay" id="inv-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:520px;max-width:96vw;max-height:90vh;overflow-y:auto;">
+    <h2 id="inv-modal-titulo" style="font-size:15px;font-weight:700;margin-bottom:18px;">+ Novo Equipamento</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="grid-column:1/-1">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Tipo de Equipamento *</label>
+        <input id="inv-fTipo" type="text" placeholder="Ex: OLT, SWITCH, RACK..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Categoria *</label>
+        <select id="inv-fCat" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+          <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
+          <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Tipo Inventário</label>
+        <select id="inv-fTipoInv" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+          <option value="BASE">BASE</option><option value="SFP">SFP</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Fabricante</label>
+        <input id="inv-fFab" type="text" placeholder="Ex: HUAWEI, ZTE, MIKROTIK..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Cidade</label>
+        <select id="inv-fCidadeM" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+          <option value="">— Selecione —</option>
+          <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
+          <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
+          <option>BRASIL NOVO</option><option>MOJUÍ</option><option>PLACAS</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">POP / Hostname</label>
+        <input id="inv-fHost" type="text" placeholder="Ex: POP01-STM, CPD-ALT..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Quantidade</label>
+        <input id="inv-fQtd" type="number" min="1" value="1" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Valor Unitário (R$)</label>
+        <input id="inv-fValor" type="text" placeholder="0,00" inputmode="decimal" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;">
+      <button onclick="invFecharModal()" style="padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--muted);cursor:pointer;font-size:12px;">Cancelar</button>
+      <button onclick="invSalvar()" style="padding:8px 20px;border:none;border-radius:6px;background:#ff5c00;color:#fff;font-weight:700;cursor:pointer;font-size:12px;">Salvar</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ MODAL EQUATORIAL ═══ -->
@@ -1220,7 +1192,7 @@ function switchTab(tab){
   document.getElementById('tab-'+tab).classList.add('active');
   document.querySelector('[data-tab="'+tab+'"]').classList.add('active');
   if(tab==='equatorial'&&!equatorialReady){equatorialReady=true;eqInit();}
-  if(tab==='inventario'&&!inventarioReady){inventarioReady=true;invInitCharts();}
+  if(tab==='inventario'&&!inventarioReady){inventarioReady=true;invCarregar();}
   if(tab==='mapa'&&!mapaReady){mapaReady=true;document.getElementById('mapa-iframe').src='mapa_rede.html';}
   if(tab==='carreira'&&!document.getElementById('carreira-iframe').src.includes('plano_carreira')){document.getElementById('carreira-iframe').src='plano_carreira_ftth_7.html';}
   if(tab==='contratos')ctInit();
@@ -1526,57 +1498,133 @@ async function eqExcluir(id){
 }
 
 /* ════════════════════════════════════════
-   INVENTÁRIO — Chart.js
+   INVENTÁRIO — dinâmico Supabase
 ════════════════════════════════════════ */
-function invInitCharts(){
-  Chart.defaults.font.family="'Segoe UI',Arial,sans-serif";
-  Chart.defaults.font.size=11;
-  const FMT=v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
-  const opH={indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+FMT(ctx.parsed.x)}}},
-    scales:{x:{ticks:{callback:v=>'R$ '+(v/1e6).toFixed(1)+'M'},grid:{color:'#f1f3f7'}},y:{grid:{display:false}}}};
-  new Chart(document.getElementById('inv-chartCategoria'),{
-    type:'doughnut',
-    data:{labels:['ATIVO REDE','ATIVO ELETRICO','ESTRUTURA','PASSIVO ELETRICO','PASSIVO OPTICO'],
-      datasets:[{data:[3363002.67,359774.24,342581.20,313130.44,129947.99],
-        backgroundColor:['#1a56db','#ff5c00','#64748b','#16a34a','#7c3aed'],borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
-    options:{cutout:'60%',plugins:{legend:{position:'right',labels:{boxWidth:12,padding:12}},
-      tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+FMT(ctx.parsed)+' ('+(ctx.parsed/4508436.54*100).toFixed(1)+'%)'}}}}
+let invDados = [];
+
+async function invCarregar(){
+  const db = getCentralDB();
+  const {data, error} = await db.from('equipamentos').select('*').order('created_at', {ascending:false});
+  if(error){ console.warn('Erro inventário:', error.message); return; }
+  invDados = data || [];
+  invKpis(invDados);
+  invRender(invDados);
+}
+
+function invKpis(data){
+  const base = data.filter(e=>e.tipo_inventario!=='SFP');
+  const sfp  = data.filter(e=>e.tipo_inventario==='SFP');
+  const soma = arr => arr.reduce((s,e)=>s+(parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1)),0);
+  const qtdB = base.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
+  const qtdS = sfp.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
+  const valB = soma(base), valS = soma(sfp), valT = valB+valS;
+  const cidades = new Set(data.map(e=>e.cidade).filter(Boolean)).size;
+  const pops    = new Set(data.map(e=>e.hostname).filter(Boolean)).size;
+  const fmt = v => v>=1e6 ? 'R$ '+(v/1e6).toFixed(2)+'M' : v>=1e3 ? 'R$ '+(v/1e3).toFixed(1)+'K' : fmtBRL(v);
+  document.getElementById('inv-kpi-qtdBase').textContent = qtdB.toLocaleString('pt-BR');
+  document.getElementById('inv-kpi-qtdBaseSub').textContent = base.length+' registros';
+  document.getElementById('inv-kpi-valBase').textContent = fmt(valB);
+  document.getElementById('inv-kpi-valBaseSub').textContent = fmtBRL(valB);
+  document.getElementById('inv-kpi-qtdSfp').textContent = qtdS.toLocaleString('pt-BR');
+  document.getElementById('inv-kpi-valSfp').textContent = fmt(valS);
+  document.getElementById('inv-kpi-valSfpSub').textContent = fmtBRL(valS);
+  document.getElementById('inv-kpi-total').textContent = (qtdB+qtdS).toLocaleString('pt-BR');
+  document.getElementById('inv-kpi-valTotal').textContent = fmt(valT);
+  document.getElementById('inv-kpi-valTotalSub').textContent = fmtBRL(valT);
+  document.getElementById('inv-kpi-cidades').textContent = cidades;
+  document.getElementById('inv-kpi-pops').textContent = pops;
+}
+
+const INV_CAT_CORES = {
+  'ATIVO REDE':'#1a56db','ATIVO ELETRICO':'#f97316','ESTRUTURA':'#64748b',
+  'PASSIVO ELETRICO':'#16a34a','PASSIVO OPTICO':'#7c3aed','SFP':'#0891b2'
+};
+
+function invRender(data){
+  const tbody = document.getElementById('inv-tbody');
+  if(!data.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:32px">Nenhum equipamento cadastrado. Clique em "+ Novo Equipamento" para começar.</td></tr>'; return; }
+  tbody.innerHTML = data.map(e=>{
+    const valTotal = parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1);
+    const cor = INV_CAT_CORES[e.categoria]||'#94a3b8';
+    return `<tr>
+      <td><strong>${e.tipo||'—'}</strong></td>
+      <td><span style="background:${cor}22;color:${cor};border:1px solid ${cor}44;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${e.categoria||'—'}</span></td>
+      <td><span style="background:#f1f5f9;color:#475569;border-radius:4px;padding:2px 8px;font-size:11px">${e.tipo_inventario||'BASE'}</span></td>
+      <td>${e.fabricante||'—'}</td>
+      <td>${e.cidade||'—'}</td>
+      <td>${e.hostname||'—'}</td>
+      <td class="center">${parseInt(e.quantidade||1).toLocaleString('pt-BR')}</td>
+      <td class="right">${fmtBRL(e.valor_unitario)}</td>
+      <td class="right" style="font-weight:700;color:${valTotal>0?'#16a34a':'#94a3b8'}">${valTotal>0?fmtBRL(valTotal):'—'}</td>
+      <td class="center"><button onclick="invExcluir(${e.id})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:5px;padding:3px 10px;font-size:11px;cursor:pointer;">Excluir</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function invFiltrar(){
+  const busca = (document.getElementById('inv-busca').value||'').toLowerCase();
+  const cat   = document.getElementById('inv-fCategoria').value;
+  const cid   = document.getElementById('inv-fCidade').value;
+  const filtrado = invDados.filter(e=>{
+    const txt = [e.tipo,e.fabricante,e.hostname].join(' ').toLowerCase();
+    return (!busca||txt.includes(busca)) && (!cat||e.categoria===cat) && (!cid||e.cidade===cid);
   });
-  new Chart(document.getElementById('inv-chartCidade'),{
-    type:'bar',
-    data:{labels:['SANTARÉM','ALTAMIRA','ITAITUBA','URUARÁ','RURÓPOLIS','MEDICILÂNDIA','BELTERRA','BRASIL NOVO','MOJUÍ','PLACAS'],
-      datasets:[{label:'Valor (R$)',data:[1907394.96,1150557.90,600542.19,174278.62,169806.40,148469.01,124622.38,91554.23,84740.92,56469.93],
-        backgroundColor:['#1a56db','#0891b2','#ff5c00','#16a34a','#7c3aed','#dc2626','#d97706','#0f766e','#64748b','#94a3b8'],borderRadius:6,borderSkipped:false}]},
-    options:opH
-  });
-  new Chart(document.getElementById('inv-chartFabricante'),{
-    type:'bar',
-    data:{labels:['HUAWEI','ZTE','INFRAESTRUTURA','XPS','UNIÃO','MOURA','FIBRACEM','MIKROTIK'],
-      datasets:[{label:'Valor (R$)',data:[2153252.59,981562.78,273405.00,225037.14,204765.00,131902.60,109793.70,79353.20],
-        backgroundColor:'#111',borderRadius:5,borderSkipped:false}]},
-    options:opH
-  });
-  new Chart(document.getElementById('inv-chartTipo'),{
-    type:'bar',
-    data:{labels:['PLACA GPON','OLT','SWITCH','NE8000','RACK','FONTE RETIF.','BATERIA CHUMBO','PARTE ELET. POP'],
-      datasets:[{label:'Valor (R$)',data:[1234563.54,1083823.34,374801.21,327271.80,315581.20,250432.21,166972.60,150000.00],
-        backgroundColor:['#1a56db','#0891b2','#ff5c00','#7c3aed','#16a34a','#dc2626','#d97706','#0f766e'],borderRadius:5,borderSkipped:false}]},
-    options:opH
-  });
-  new Chart(document.getElementById('inv-chartPOP'),{
-    type:'bar',
-    data:{labels:['POP TRANSPORTE','POP02','DATA CENTER','POP01','POP04','POP03','POP05','POP06','POP07','CPD'],
-      datasets:[{label:'Valor (R$)',data:[680504.65,655186.16,627114.02,444540.91,378652.20,237167.97,236617.93,189714.14,164670.73,163717.74],
-        backgroundColor:'#0891b2',borderRadius:5,borderSkipped:false}]},
-    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+FMT(ctx.parsed.y)}}},
-      scales:{y:{ticks:{callback:v=>'R$ '+(v/1e3).toFixed(0)+'K'},grid:{color:'#f1f3f7'}},x:{grid:{display:false},ticks:{maxRotation:30}}}}
-  });
-  new Chart(document.getElementById('inv-chartSFP'),{
-    type:'doughnut',
-    data:{labels:['DUPLEX (85 itens)','BIDI (63 itens)'],
-      datasets:[{data:[121895.72,50281.28],backgroundColor:['#7c3aed','#ff5c00'],borderWidth:3,borderColor:'#fff',hoverOffset:8}]},
-    options:{cutout:'55%',plugins:{legend:{position:'bottom',labels:{boxWidth:12}},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+FMT(ctx.parsed)}}}}
-  });
+  invRender(filtrado);
+}
+
+let invEditandoId = null;
+
+function invAbrirModal(id){
+  invEditandoId = id||null;
+  document.getElementById('inv-modal-titulo').textContent = id ? 'Editar Equipamento' : '+ Novo Equipamento';
+  if(!id){
+    ['inv-fTipo','inv-fFab','inv-fHost','inv-fValor'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('inv-fQtd').value=1;
+    document.getElementById('inv-fCat').value='ATIVO REDE';
+    document.getElementById('inv-fTipoInv').value='BASE';
+    document.getElementById('inv-fCidadeM').value='';
+  }
+  const ov = document.getElementById('inv-overlay');
+  ov.style.display='flex';
+}
+
+function invFecharModal(){
+  document.getElementById('inv-overlay').style.display='none';
+  invEditandoId=null;
+}
+
+async function invSalvar(){
+  const tipo = document.getElementById('inv-fTipo').value.trim().toUpperCase();
+  if(!tipo){ showToast('Informe o tipo de equipamento','error'); return; }
+  const payload = {
+    tipo,
+    categoria: document.getElementById('inv-fCat').value,
+    tipo_inventario: document.getElementById('inv-fTipoInv').value,
+    fabricante: document.getElementById('inv-fFab').value.trim().toUpperCase()||null,
+    cidade: document.getElementById('inv-fCidadeM').value||null,
+    hostname: document.getElementById('inv-fHost').value.trim().toUpperCase()||null,
+    quantidade: parseInt(document.getElementById('inv-fQtd').value)||1,
+    valor_unitario: parseBRL(document.getElementById('inv-fValor').value)||0
+  };
+  const db = getCentralDB();
+  let error;
+  if(invEditandoId){
+    ({error} = await db.from('equipamentos').update(payload).eq('id',invEditandoId));
+  } else {
+    ({error} = await db.from('equipamentos').insert([payload]));
+  }
+  if(error){ showToast('Erro ao salvar: '+error.message,'error'); return; }
+  showToast(invEditandoId?'Equipamento atualizado!':'Equipamento cadastrado!','success');
+  invFecharModal();
+  await invCarregar();
+}
+
+async function invExcluir(id){
+  if(!confirm('Excluir este equipamento do inventário?')) return;
+  const {error} = await getCentralDB().from('equipamentos').delete().eq('id',id);
+  if(error){ showToast('Erro ao excluir: '+error.message,'error'); return; }
+  showToast('Equipamento excluído.','info');
+  await invCarregar();
 }
 
 /* ════════════════════════════════════════
