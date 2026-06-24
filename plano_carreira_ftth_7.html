@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOV FIBRA — Plano de Carreira</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0c10;--surface:#12151c;--surface2:#1a1f2b;--border:rgba(255,255,255,0.07);
+  --text:#e8eaf0;--muted:#6b7280;
+  --brand:#7c3aed;--brand2:#a855f7;--brand-glow:rgba(124,58,237,0.2);
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;}
+
+/* ── MOV FIBRA LOGO ── */
+.mov-logo{display:inline-flex;align-items:center;gap:4px;font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-bottom:28px;}
+.mov-logo .mov{color:#fff;}
+.mov-logo .fibra{color:var(--brand2);}
+.mov-logo::before{content:'◈';color:var(--brand);font-size:1.1rem;margin-right:6px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.toast-msg{background:#1e2330;border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.82rem;display:flex;align-items:center;gap:10px;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:slideIn .25s ease;pointer-events:none;}
+.toast-msg.success{border-color:rgba(34,197,94,.3);}
+.toast-msg.error{border-color:rgba(239,68,68,.3);}
+.toast-msg.info{border-color:rgba(124,58,237,.3);}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+
+/* CONFIG BANNER */
+#configBanner{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+#configBanner p{font-size:.85rem;color:var(--text);}
+#configBanner span{font-size:.78rem;color:var(--muted);}
+.btn-config{display:flex;align-items:center;gap:8px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35);border-radius:8px;padding:8px 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--brand2);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-config:hover{background:rgba(124,58,237,.2);}
+
+/* STATUS DOT */
+.conn-status{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .4s;}
+.conn-dot.ok{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.5);}
+.conn-dot.err{background:#ef4444;}
+.conn-dot.loading{background:var(--brand2);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* HERO */
+.hero{padding:72px 0 52px;text-align:center;}
+.hero-tag{display:inline-block;font-family:'Syne',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand2);border:1px solid rgba(124,58,237,.35);padding:6px 16px;border-radius:2px;margin-bottom:20px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:16px;background:linear-gradient(135deg,#fff 40%,#6b7280 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{color:var(--muted);font-size:1rem;max-width:500px;margin:0 auto 40px;line-height:1.7;}
+.salary-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:64px;}
+.sal-chip{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:40px;padding:10px 18px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.sal-chip:hover{transform:translateY(-2px);}
+.sal-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--chip-color,#fff);}
+.sal-chip:hover{border-color:var(--chip-color,#fff);box-shadow:0 0 20px rgba(255,255,255,.1);}
+
+/* TOOLBAR */
+.toolbar-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.section-label{font-family:'Syne',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.toolbar-right{display:flex;align-items:center;gap:10px;}
+.btn-toolbar{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text);cursor:pointer;transition:all .2s;}
+.btn-toolbar:hover{border-color:rgba(255,255,255,.2);background:var(--surface2);transform:translateY(-1px);}
+.btn-toolbar.brand{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35);color:var(--brand2);}
+.btn-toolbar.brand:hover{background:rgba(124,58,237,.22);border-color:var(--brand2);}
+
+/* TEAM OVERVIEW */
+.team-overview{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:28px;display:flex;gap:28px;flex-wrap:wrap;align-items:center;}
+.team-stat{text-align:center;}
+.team-stat-num{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:4px;}
+.team-stat-label{font-size:.72rem;color:var(--muted);}
+.team-divider{width:1px;height:36px;background:var(--border);}
+@media(max-width:600px){.team-divider{display:none;}.team-overview{gap:16px;}}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+@media(max-width:700px){.cards-grid{grid-template-columns:1fr;}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s;position:relative;overflow:hidden;animation:fadeUp .5s ease both;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,#fff);opacity:0;transition:opacity .3s;}
+.card:hover::before{opacity:1;}
+.card:hover{border-color:color-mix(in srgb, var(--c,#fff) 30%, transparent);box-shadow:0 12px 40px var(--cg,rgba(255,255,255,.1));}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:8px;}
+.card-header-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.card-level-badge{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;background:color-mix(in srgb,var(--c,#fff) 12%,transparent);color:var(--c,#fff);}
+.card-edit-btn{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.card-edit-btn:hover{border-color:var(--c,#fff);color:var(--c,#fff);background:var(--cg,rgba(255,255,255,.05));}
+.card-salary{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:700;color:var(--c,#fff);white-space:nowrap;}
+.card h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:4px;}
+.card-subtitle{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
+.pill-group{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.pill{font-size:.73rem;padding:4px 11px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-weight:500;transition:color .2s;}
+.card:hover .pill{color:var(--text);}
+.expand-btn{display:flex;align-items:center;gap:6px;font-size:.76rem;font-family:'Syne',sans-serif;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;transition:color .2s;margin-top:2px;}
+.card:hover .expand-btn{color:var(--c,#fff);}
+.expand-icon{transition:transform .3s;}.card.expanded .expand-icon{transform:rotate(180deg);}
+.card-details{max-height:0;overflow:hidden;transition:max-height .4s ease;}.card.expanded .card-details{max-height:2000px;}
+.detail-divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.detail-section{margin-bottom:14px;}
+.detail-label{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.detail-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.detail-list li{font-size:.83rem;color:var(--text);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.detail-list li::before{content:'–';color:var(--muted);flex-shrink:0;margin-top:1px;}
+
+/* ADD LEVEL CARD */
+.card-add{background:transparent;border:2px dashed rgba(124,58,237,.3);border-radius:16px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;transition:all .25s;min-height:180px;}
+.card-add:hover{border-color:var(--brand2);background:rgba(124,58,237,.05);}
+.card-add-icon{font-size:2rem;color:rgba(124,58,237,.5);transition:color .2s;}
+.card-add:hover .card-add-icon{color:var(--brand2);}
+.card-add-label{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:color .2s;}
+.card-add:hover .card-add-label{color:var(--brand2);}
+
+/* TECHNICIANS */
+.tech-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.tech-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tech-label{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.tech-count{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--c,#fff);}
+.tech-avatars{display:flex;flex-wrap:wrap;gap:7px;min-height:36px;align-items:center;}
+.tech-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;border:2px solid var(--bg);cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;flex-shrink:0;background:color-mix(in srgb,var(--c,#fff) 18%,transparent);color:var(--c,#fff);border-color:color-mix(in srgb,var(--c,#fff) 30%,transparent);}
+.tech-avatar:hover{transform:translateY(-2px) scale(1.08);z-index:2;}
+.tech-avatar.has-exams::after{content:'';position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:#60a5fa;border:2px solid var(--surface);}
+.tech-add-btn{width:36px;height:36px;border-radius:50%;border:2px dashed var(--border);background:transparent;color:var(--muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;margin-top:10px;}
+.tech-add-btn:hover{border-color:var(--c,#fff);color:var(--c,#fff);background:var(--cg,rgba(255,255,255,.05));}
+.tech-empty{font-size:.76rem;color:var(--muted);font-style:italic;}
+
+/* NIVEL EXAM */
+.nivel-exam-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.nivel-exam-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.nivel-exam-label{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.nivel-exam-files{display:flex;flex-direction:column;gap:8px;}
+.nivel-exam-file{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;transition:border-color .2s;}
+.nivel-exam-file:hover{border-color:rgba(255,255,255,.15);}
+.nivel-exam-file-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.nivel-exam-file-icon{font-size:1.1rem;flex-shrink:0;}
+.nivel-exam-file-name{font-size:.76rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nivel-exam-file-type{font-family:'Syne',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:2px 7px;border-radius:4px;flex-shrink:0;}
+.nivel-exam-file-type.teorica{background:rgba(167,139,250,.15);color:#a78bfa;}
+.nivel-exam-file-type.pratica{background:rgba(56,189,248,.15);color:#38bdf8;}
+.nivel-exam-file-actions{display:flex;gap:4px;flex-shrink:0;}
+.nivel-exam-empty{font-size:.74rem;color:var(--muted);font-style:italic;}
+.nivel-exam-upload{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.btn-upload-exam{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-upload-exam:hover{border-color:var(--c,#fff);color:var(--c,#fff);background:var(--cg,rgba(255,255,255,.05));}
+.nivel-exam-input{display:none;}
+
+/* PROGRESS */
+.progress-section{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;margin-bottom:72px;}
+.progress-section h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+.progress-section p{font-size:.83rem;color:var(--muted);margin-bottom:36px;}
+.salary-chart{display:flex;flex-direction:column;gap:18px;}
+.chart-row{display:grid;grid-template-columns:140px 1fr 100px;align-items:center;gap:14px;}
+.chart-name{font-size:.8rem;color:var(--muted);font-weight:500;text-align:right;}
+.chart-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.chart-fill{height:100%;border-radius:4px;width:0;transition:width 1.1s cubic-bezier(.4,0,.2,1);background:var(--c,#fff);}
+.chart-value{font-family:'Syne',sans-serif;font-size:.86rem;font-weight:700;color:var(--c,#fff);}
+
+/* RULES */
+.rules-section{padding-bottom:72px;}
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:700px){.rules-grid{grid-template-columns:1fr;}}
+.rule-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 22px;transition:border-color .2s;}
+.rule-card:hover{border-color:rgba(255,255,255,.15);}
+.rule-icon{font-size:1.7rem;margin-bottom:14px;display:block;}
+.rule-card h4{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:8px;}
+.rule-card p{font-size:.8rem;color:var(--muted);line-height:1.6;}
+
+/* FOOTER */
+.footer-cta{text-align:center;padding:56px 0 72px;border-top:1px solid var(--border);}
+.footer-cta p{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;line-height:1.3;max-width:480px;margin:0 auto 20px;}
+.footer-cta span{background:linear-gradient(90deg,var(--brand),var(--brand2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-ig{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.82rem;color:var(--muted);margin-bottom:28px;}
+.footer-ig a{color:var(--brand2);text-decoration:none;font-weight:600;}
+.footer-ig a:hover{text-decoration:underline;}
+.steps-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
+.step-item{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;color:var(--text);}
+.step-arrow{color:var(--border);font-size:.9rem;}
+
+/* MODAL BASE */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:#13161e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;transform:translateY(16px);transition:transform .25s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.12rem;font-weight:700;}
+.modal-subtitle-sm{font-size:.76rem;color:var(--muted);margin-top:4px;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:0;line-height:1;transition:color .2s;}
+.modal-close:hover{color:var(--text);}
+.modal-field{margin-bottom:15px;}
+.modal-field label{display:block;font-size:.73rem;font-family:'Syne',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-weight:600;}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;resize:vertical;}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:rgba(124,58,237,.5);}
+.modal-field select option{background:#13161e;}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:480px){.modal-row{grid-template-columns:1fr;}}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.modal-tab{flex:1;padding:9px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;color:var(--muted);cursor:pointer;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.modal-tab.active{color:var(--text);border-bottom-color:var(--brand2);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+.exam-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.exam-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.exam-item-info{flex:1;min-width:0;}
+.exam-item-type{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:3px;}
+.exam-item-type.teorica{color:#a78bfa;}.exam-item-type.pratica{color:#38bdf8;}
+.exam-item-meta{font-size:.76rem;color:var(--muted);}
+.exam-item-score{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;}
+.score-pass{color:#22c55e;}.score-fail{color:#ef4444;}
+.exam-item-actions{display:flex;gap:5px;flex-shrink:0;}
+.btn-icon{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.83rem;padding:4px 6px;border-radius:6px;transition:all .2s;}
+.btn-icon:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.btn-icon.red:hover{color:#ef4444;}
+.attach-link{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;color:#60a5fa;text-decoration:none;margin-top:3px;}
+.attach-link:hover{text-decoration:underline;}
+.promo-banner{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.25);border-radius:12px;padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+.promo-banner.green{background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.25);}
+.promo-icon{font-size:1.4rem;flex-shrink:0;}
+.promo-text{font-size:.8rem;line-height:1.5;}
+.promo-text strong{font-family:'Syne',sans-serif;font-size:.83rem;display:block;margin-bottom:2px;}
+.modal-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
+.btn-primary{flex:1;min-width:110px;padding:11px;border-radius:10px;border:none;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:opacity .2s,transform .15s;}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-secondary{padding:11px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{color:var(--text);border-color:rgba(255,255,255,.15);}
+.btn-danger{padding:11px 15px;border-radius:10px;border:1px solid rgba(239,68,68,.3);background:transparent;color:#ef4444;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-danger:hover{background:rgba(239,68,68,.1);}
+.btn-promote{display:flex;align-items:center;gap:7px;padding:11px 18px;border-radius:10px;border:1px solid rgba(124,58,237,.35);background:rgba(124,58,237,.07);color:var(--brand2);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-promote:hover{background:rgba(124,58,237,.15);border-color:var(--brand2);}
+.btn-demote{display:flex;align-items:center;gap:7px;padding:11px 18px;border-radius:10px;border:1px solid rgba(107,114,128,.3);background:rgba(107,114,128,.07);color:var(--muted);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-demote:hover{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
+
+/* CONFIG MODAL */
+#cfgModal{background:#13161e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;width:100%;max-width:480px;transform:translateY(16px);transition:transform .25s;}
+.modal-overlay.open #cfgModal{transform:translateY(0);}
+.cfg-hint{font-size:.76rem;color:var(--muted);line-height:1.6;margin-bottom:18px;padding:11px 13px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--brand);}
+.cfg-hint b{color:var(--text);}
+
+/* LEVEL EDIT MODAL */
+#levelModal{background:#13161e;border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;transform:translateY(16px);transition:transform .25s;}
+.modal-overlay.open #levelModal{transform:translateY(0);}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;flex-shrink:0;}
+.color-swatch:hover{transform:scale(1.15);}
+.color-swatch.active{border-color:#fff;}
+.sections-editor{display:flex;flex-direction:column;gap:10px;}
+.section-editor-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.section-editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.section-editor-header input{background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;outline:none;width:100%;}
+.section-editor-header input::placeholder{color:var(--muted);}
+.section-editor-header button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:2px 5px;border-radius:4px;transition:color .2s;flex-shrink:0;}
+.section-editor-header button:hover{color:#ef4444;}
+.section-editor-item textarea{width:100%;background:transparent;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8rem;line-height:1.6;outline:none;resize:vertical;min-height:60px;}
+.btn-add-section{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px dashed rgba(124,58,237,.35);background:transparent;color:var(--brand2);font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s;width:100%;justify-content:center;}
+.btn-add-section:hover{background:rgba(124,58,237,.08);border-color:var(--brand2);}
+
+/* SKELETON / ANIMATIONS */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#1e2435 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:18px;width:36px;height:36px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero>.mov-logo,.hero-tag,.hero h1,.hero p,.salary-bar{animation:fadeUp .6s ease both;}
+.hero h1{animation-delay:.1s;}.hero p{animation-delay:.2s;}.salary-bar{animation-delay:.3s;}
+.cards-section{padding:0 0 52px;}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<!-- CONFIG MODAL -->
+<div class="modal-overlay" id="cfgOverlay" style="z-index:2000" onclick="handleCfgOverlay(event)">
+  <div id="cfgModal">
+    <div class="modal-top">
+      <div><div class="modal-title">⚙️ Configurar Supabase</div><div class="modal-subtitle-sm">Conecte ao banco de dados</div></div>
+      <button class="modal-close" onclick="closeCfg()">×</button>
+    </div>
+    <div class="cfg-hint">1. Acesse <b>supabase.com</b> → seu projeto → <b>Project Settings → API</b><br>2. Copie a <b>Project URL</b> e a chave <b>anon public</b><br>3. Cole nos campos abaixo e clique em Salvar e Conectar</div>
+    <div class="modal-field"><label>Project URL</label><input type="text" id="cfgUrl" placeholder="https://xxxxxxxxxxx.supabase.co"></div>
+    <div class="modal-field"><label>Anon Key (public)</label><input type="text" id="cfgKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeCfg()">Cancelar</button>
+      <button class="btn-primary" style="background:var(--brand);color:#fff" onclick="saveConfig()">Salvar e Conectar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TECH MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-top">
+      <div><div class="modal-title" id="modalTitle">Técnico</div><div class="modal-subtitle-sm" id="modalSubtitle"></div></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-tabs" id="modalTabs">
+      <button class="modal-tab active" onclick="switchTab('dados')">Dados</button>
+      <button class="modal-tab" onclick="switchTab('provas')">Provas</button>
+      <button class="modal-tab" onclick="switchTab('promocao')">Promoção</button>
+    </div>
+    <div class="tab-pane active" id="tab-dados">
+      <div class="modal-field"><label>Nome completo</label><input type="text" id="techName" placeholder="Ex: João Silva" autocomplete="off"></div>
+      <div class="modal-row">
+        <div class="modal-field"><label>Telefone (opcional)</label><input type="text" id="techPhone" placeholder="(91) 99999-9999"></div>
+        <div class="modal-field"><label>Data de admissão</label><input type="date" id="techAdmission"></div>
+      </div>
+      <div class="modal-field"><label>Cidade de atuação</label><input type="text" id="techCity" placeholder="Ex: Santarém, PA" autocomplete="off"></div>
+      <div class="modal-actions" id="dadosActions"></div>
+    </div>
+    <div class="tab-pane" id="tab-provas">
+      <div class="exam-list" id="examList"></div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+        <p class="detail-label" style="margin-bottom:10px">Registrar nova prova</p>
+        <div class="modal-row">
+          <div class="modal-field"><label>Tipo</label><select id="examType"><option value="teorica">Teórica</option><option value="pratica">Prática</option></select></div>
+          <div class="modal-field"><label>Data</label><input type="date" id="examDate"></div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field"><label>Nota (0–10)</label><input type="number" id="examScore" min="0" max="10" step="0.1" placeholder="Ex: 7.5"></div>
+          <div class="modal-field"><label>Nota mínima</label><input type="number" id="examMin" min="0" max="10" step="0.1" placeholder="Ex: 6.0" value="6.0"></div>
+        </div>
+        <div class="modal-field"><label>Anexar arquivo (PDF / imagem)</label><input type="file" id="examFile" accept=".pdf,.jpg,.jpeg,.png" style="padding:8px 12px;cursor:pointer;"></div>
+        <button class="btn-primary" style="background:#60a5fa;color:#000;margin-top:4px;width:100%" onclick="addExam()">+ Registrar Prova</button>
+      </div>
+    </div>
+    <div class="tab-pane" id="tab-promocao">
+      <div id="promoBanner"></div>
+      <div id="promoHistory"></div>
+      <div class="modal-actions" id="promoActions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL EDIT MODAL -->
+<div class="modal-overlay" id="levelModalOverlay" style="z-index:1100" onclick="handleLevelOverlay(event)">
+  <div id="levelModal">
+    <div class="modal-top">
+      <div><div class="modal-title" id="levelModalTitle">Editar Cargo</div><div class="modal-subtitle-sm" id="levelModalSub"></div></div>
+      <button class="modal-close" onclick="closeLevelModal()">×</button>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field"><label>Badge (ex: Nível 01)</label><input type="text" id="lvBadge" placeholder="Nível 01"></div>
+      <div class="modal-field"><label>Salário (ex: R$ 2.671)</label><input type="text" id="lvSalary" placeholder="R$ 2.671"></div>
+    </div>
+    <div class="modal-field"><label>Nome do cargo</label><input type="text" id="lvName" placeholder="Ex: Auxiliar de Cabista"></div>
+    <div class="modal-field"><label>Subtítulo</label><input type="text" id="lvSubtitle" placeholder="Ex: Ponto de entrada na carreira"></div>
+    <div class="modal-field">
+      <label>Cor do nível</label>
+      <div class="color-swatches" id="colorSwatches"></div>
+    </div>
+    <div class="modal-field"><label>Requisitos / Pills (um por linha)</label><textarea id="lvPills" rows="3" placeholder="NR-10 e NR-35&#10;Fibra Óptica Básico&#10;CNH A/B em processo"></textarea></div>
+    <div class="modal-field">
+      <label>Seções de detalhes</label>
+      <div class="sections-editor" id="sectionsEditor"></div>
+      <button class="btn-add-section" style="margin-top:8px" onclick="addSectionEditor()">+ Adicionar seção</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="lvDeleteBtn" onclick="deleteLevelConfirm()">Excluir cargo</button>
+      <button class="btn-secondary" onclick="closeLevelModal()">Cancelar</button>
+      <button class="btn-primary" style="background:var(--brand);color:#fff;flex:1" onclick="saveLevelConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <section class="hero">
+    <div class="mov-logo"><span class="mov">MOV</span><span class="fibra">FIBRA</span></div>
+    <div class="hero-tag">Plano de Carreira</div>
+    <h1>Infraestrutura<br>FTTH</h1>
+    <p>Evolução estruturada por níveis, com critérios objetivos baseados em experiência prática, certificações e desempenho em campo.</p>
+    <div class="salary-bar" id="salaryBar"></div>
+  </section>
+
+  <section class="cards-section">
+    <div id="configBanner">
+      <div>
+        <p>🔌 Banco de dados não configurado</p>
+        <span>Os dados serão salvos apenas localmente até você conectar o Supabase.</span>
+      </div>
+      <button class="btn-config" onclick="openCfg()">Configurar Supabase</button>
+    </div>
+    <div class="toolbar-row">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <p class="section-label">Níveis de Evolução</p>
+        <div class="conn-status"><div class="conn-dot" id="connDot"></div><span id="connLabel">Desconectado</span></div>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn-toolbar brand" onclick="openAddLevelModal()">+ Novo Cargo</button>
+        <button class="btn-toolbar" onclick="resetLevelColors()" title="Aplicar cor distinta para cada nível">🎨 Restaurar Cores</button>
+        <button class="btn-toolbar" onclick="gerarPDF()">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2h6l3 3v9a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M9 2v4h4M5 8h6M5 10.5h6M5 5.5h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Exportar PDF
+        </button>
+      </div>
+    </div>
+    <div class="team-overview" id="teamOverview"></div>
+    <div class="cards-grid" id="cardsGrid"></div>
+  </section>
+
+  <section class="progress-section" id="progressSection">
+    <h2>Progressão Salarial</h2>
+    <p id="progressSubtitle"></p>
+    <div class="salary-chart" id="salaryChart"></div>
+  </section>
+
+  <section class="rules-section">
+    <p class="section-label" style="margin-bottom:16px">Regras e Valores</p>
+    <div class="rules-grid">
+      <div class="rule-card"><span class="rule-icon">🦺</span><h4>EPIs São Obrigatórios</h4><p>O uso correto dos Equipamentos de Proteção Individual é inegociável em todos os níveis, em qualquer atividade de campo.</p></div>
+      <div class="rule-card"><span class="rule-icon">🚗</span><h4>CNH AB é Essencial</h4><p>A partir do Cabista Júnior a CNH AB é requisito obrigatório. No nível Auxiliar, o processo deve ser iniciado em até 3 meses.</p></div>
+      <div class="rule-card"><span class="rule-icon">📈</span><h4>Evolução por Mérito</h4><p>A progressão é baseada em experiência prática comprovada, certificações obtidas e performance real no campo.</p></div>
+    </div>
+  </section>
+
+  <section class="footer-cta">
+    <p>Sua evolução<br><span>começa hoje.</span></p>
+    <div class="footer-ig">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      <a href="https://instagram.com/queromov" target="_blank">@queromov</a>
+      <span>·</span>
+      <span>MOV FIBRA</span>
+    </div>
+    <div class="steps-row" id="stepsRow"></div>
+  </section>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  LEVEL CONFIGS — defaults + localStorage
+// ════════════════════════════════════════════
+const DEFAULT_CONFIGS = {
+  0:{badge:'Nível 00',name:'Auxiliar de Infraestrutura',subtitle:'Porta de entrada · sem experiência prévia exigida',salary:'A definir',color:'#f59e0b',
+     pills:['NR-10 e NR-35','Ensino Médio','CNH em processo','Aprendizado em campo'],
+     sections:[
+       {label:'Atividades',items:[
+         'Apoio às equipes técnicas em campo',
+         'Lançamento de cabos e organização de materiais',
+         'Manuseio básico de ferramentas e EPIs',
+         'Suporte em montagem de caixas e passagem de cabos',
+         'Alçar poste com supervisão',
+         'Apoio em travessias e instalações externas',
+         'Transporte e organização de equipamentos'
+       ]},
+       {label:'Competências Comportamentais',items:[
+         'Vontade de aprender e desenvolvimento contínuo',
+         'Disciplina e respeito à hierarquia',
+         'Pontualidade e comprometimento',
+         'Trabalho em equipe',
+         'Comunicativo e proativo'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo ou cursando',
+         'CNH categoria B (em processo — obrigatória em até 6 meses)',
+         'NR-10 e NR-35 fornecidos pela empresa',
+         'Sem experiência prévia exigida'
+       ]}
+     ]},
+  1:{badge:'Nível 01',name:'Técnico de Infraestrutura Júnior',subtitle:'Início de carreira · 1 a 3 anos de experiência',salary:'R$ 2.671',color:'#f59e0b',
+     pills:['NR-10 e NR-35','CNH obrigatória','Fibra e Fusão','1–3 anos'],
+     sections:[
+       {label:'Competências Técnicas',items:[
+         'NR-10 e NR-35 (obrigatórios)',
+         'Conhecimento em equipamentos e materiais (Cano 1½, Supa, Cabos UTP/FTP)',
+         'Conectores RJ e FAST',
+         'Manuseio em escada',
+         'Antenas, caneta óptica, power meter',
+         'Viabilidade rádio',
+         'Mikrotik, access point, ONU (básico)',
+         'Alçar poste e travessias',
+         'Montagem de caixa, CTO/CO, splitter',
+         'Fusão e clivagem de fibra',
+         'Furadeira e brocas',
+         'Leitura de datagrama de fusões/projetos (GeoGrid)',
+         'Noções básicas de elétrica',
+         'Noções básicas de construção de rede',
+         'Geradores e baterias',
+         'Disponibilidade para sobreaviso e plantão',
+         'Rompimentos de cabos ópticos',
+         'Comunicação com NOC e termos técnicos'
+       ]},
+       {label:'Competências Comportamentais',items:[
+         'Dinâmico e com pensamento rápido',
+         'Bom relacionamento interpessoal',
+         'Senso de equipe e colaboração',
+         'Respeito à hierarquia',
+         'Proativo, comunicativo e executor'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo',
+         'Cursando Técnico em Informática ou Eletrotécnico',
+         'CNH obrigatória',
+         '1 a 3 anos na função'
+       ]}
+     ]},
+  2:{badge:'Nível 02',name:'Técnico de Infraestrutura Pleno',subtitle:'Autonomia e diagnóstico · 3 a 4 anos de experiência',salary:'R$ 3.000',color:'#22c55e',
+     pills:['OTDR','Enlace Digital','Elétrica intermediária','3–4 anos'],
+     sections:[
+       {label:'Competências Técnicas',items:[
+         'NR-10 e NR-35 (obrigatórios)',
+         'Domínio de equipamentos e materiais',
+         'Configuração de roteador e ONU',
+         'Acesso e configuração com apoio do NOC — Mikrotik, access point, ONU',
+         'Alçar poste, travessias, montagem caixa, CTO/CO, splitter',
+         'Fusão e clivagem de fibra',
+         'Interpretação de datagrama de projetos (GeoGrid)',
+         'Enlace Digital — Nokia e Ericsson',
+         'Manusear OTDR',
+         'Conhecimento intermediário em elétrica',
+         'Construção de rede óptica',
+         'Geradores e baterias · sobreaviso e plantão',
+         'Rompimentos',
+         'Auxiliar na montagem de POP / backbone',
+         'Configuração básica de equipamentos do POP (switch, roteadores, retificadores, OLT)',
+         'Comunicação com NOC',
+         'Solda'
+       ]},
+       {label:'Competências Comportamentais',items:[
+         'Dinâmico e com pensamento rápido',
+         'Bom relacionamento interpessoal',
+         'Senso de equipe e colaboração',
+         'Respeito à hierarquia e autonomia',
+         'Proativo, comunicativo e executor'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo',
+         'Técnico completo em Informática ou Eletrotécnico',
+         'CNH obrigatória',
+         '3 a 4 anos na função'
+       ]}
+     ]},
+  3:{badge:'Nível 03',name:'Técnico de Infraestrutura Sênior',subtitle:'Referência técnica · 5 a 7 anos de experiência',salary:'R$ 3.500',color:'#3b82f6',
+     pills:['OTDR avançado','Elétrica avançada','POP / Backbone','Eletrotécnico','5–7 anos'],
+     sections:[
+       {label:'Competências Técnicas',items:[
+         'NR-10 e NR-35 (obrigatórios)',
+         'Conhecimento avançado em equipamentos e materiais',
+         'Configuração avançada de roteador e ONU',
+         'Configuração autônoma — Mikrotik, access point, ONU',
+         'Alçar poste, travessias, montagem caixa, CTO/CO, splitter',
+         'Fusão e clivagem de fibra',
+         'Interpretação avançada de datagrama (GeoGrid)',
+         'Configuração e instalação de Enlace Digital — Nokia e Ericsson',
+         'Manusear OTDR — nível avançado',
+         'Conhecimento avançado em elétrica',
+         'Construção de redes ópticas completas',
+         'Geradores e baterias · sobreaviso e plantão',
+         'Rompimentos — nível avançado',
+         'Montagem autônoma de POP / backbone',
+         'Configuração avançada de equipamentos do POP (switch, roteadores, retificadores, OLT)',
+         'Comunicação sólida com NOC',
+         'Solda'
+       ]},
+       {label:'Competências Comportamentais',items:[
+         'Dinâmico e com pensamento rápido',
+         'Bom relacionamento interpessoal',
+         'Senso de equipe, colaboração e liderança',
+         'Respeito à hierarquia e autonomia',
+         'Proativo, comunicativo e executor'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo',
+         'Técnico em Eletrotécnica (concluído)',
+         'CNH obrigatória',
+         '5 a 7 anos na função'
+       ]}
+     ]},
+  4:{badge:'Nível 04',name:'Supervisor de Infraestrutura',subtitle:'Liderança de campo · 5+ anos de experiência',salary:'R$ 4.000',color:'#ef4444',
+     pills:['Liderança de equipe','Gestão de SLA','POP / Backbone','Planejamento','5+ anos'],
+     sections:[
+       {label:'Competências Técnicas',items:[
+         'Domínio completo de equipamentos e materiais de infraestrutura',
+         'Supervisão técnica de instalação, manutenção preventiva e corretiva',
+         'Coordenação de rompimentos e atendimento a SLA',
+         'Leitura e análise de OTDR — nível avançado',
+         'Configuração e supervisão de equipamentos do POP (switch, roteadores, retificadores, OLT)',
+         'Gestão de backbone e estrutura de rede óptica',
+         'Enlace Digital — Nokia e Ericsson',
+         'Supervisão de configurações Mikrotik, access point, ONU',
+         'Comunicação e coordenação com NOC',
+         'Gestão de inventário técnico e materiais de campo',
+         'Elaboração de documentação técnica e relatórios'
+       ]},
+       {label:'Responsabilidades de Liderança',items:[
+         'Supervisionar e orientar equipes de técnicos Júnior, Pleno e Sênior',
+         'Distribuição e acompanhamento de ordens de serviço',
+         'Garantir cumprimento de SLA e qualidade dos serviços',
+         'Treinar e desenvolver a equipe técnica em campo',
+         'Interlocução entre a equipe técnica e o Gerente de Infraestrutura',
+         'Elaborar relatórios de desempenho operacional'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo',
+         'Técnico em Eletrotécnica ou Informática (desejável)',
+         'CNH obrigatória',
+         'Mínimo 5 anos na área, com experiência prévia como técnico Sênior'
+       ]}
+     ]},
+  5:{badge:'Nível 05',name:'Gerente de Infraestrutura',subtitle:'Gestão técnica e estratégica · CBO 1425-05',salary:'A definir',color:'#a855f7',
+     pills:['Gestão de equipe','Telecom','Redes IP','Superior TI','2+ anos'],
+     sections:[
+       {label:'Competências Técnicas',items:[
+         'Pacote Office',
+         'Ferramentas de infraestrutura para telecomunicações',
+         'Hardware para telecomunicações',
+         'Gerenciamento de equipes técnicas',
+         'Sistemas de telefonia IP',
+         'Monitoramento IP',
+         'Sistemas de rede wireless',
+         'Transmissão de dados'
+       ]},
+       {label:'Responsabilidades',items:[
+         'Planejar atividades e gerenciar projetos de TI e infraestrutura',
+         'Garantir a segurança e disponibilidade dos sistemas',
+         'Identificar oportunidades de melhoria tecnológica',
+         'Administrar e desenvolver equipes técnicas',
+         'Definir necessidades de recursos (hardware, software, infraestrutura)',
+         'Interação com outras áreas da empresa'
+       ]},
+       {label:'Competências Comportamentais',items:[
+         'Liderança e gestão de pessoas',
+         'Pensamento estratégico e analítico',
+         'Bom relacionamento interpessoal',
+         'Comunicação clara e assertiva',
+         'Proativo e orientado a resultados'
+       ]},
+       {label:'Formação e Experiência',items:[
+         'Ensino Médio Completo',
+         'Superior completo na área de TI',
+         'CNH obrigatória',
+         'Mínimo 2 anos na função'
+       ]}
+     ]}
+};
+
+const PALETTE = ['#f59e0b','#22c55e','#3b82f6','#ef4444','#a855f7','#06b6d4','#f97316','#ec4899','#84cc16','#14b8a6'];
+const POLO_XINGU_NORM=['altamira','brasil novo','medicilandia','uruara'];
+const POLO_TAPAJOS_NORM=['ruropolis','santarem','itaituba'];
+function normCity(s){return s?s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim():'';}
+function getPolo(city){const n=normCity(city);if(POLO_XINGU_NORM.some(c=>n.includes(c)))return'Polo Xingu';if(POLO_TAPAJOS_NORM.some(c=>n.includes(c)))return'Polo Tapajós';return'Outros';}
+
+let levelConfigs = {};
+
+function loadLevelConfigs(){
+  try{ const s=localStorage.getItem('mov_level_configs_v2'); if(s) levelConfigs=JSON.parse(s); else levelConfigs=JSON.parse(JSON.stringify(DEFAULT_CONFIGS)); }
+  catch(e){ levelConfigs=JSON.parse(JSON.stringify(DEFAULT_CONFIGS)); }
+}
+function saveLevelConfigsLocal(){ localStorage.setItem('mov_level_configs_v2',JSON.stringify(levelConfigs)); }
+function getLevelIds(){ return Object.keys(levelConfigs).map(Number).sort((a,b)=>a-b); }
+
+function resetLevelColors(){
+  const LEVEL_COLORS=['#f59e0b','#22c55e','#3b82f6','#ef4444','#a855f7','#06b6d4','#f97316','#ec4899','#84cc16','#14b8a6'];
+  getLevelIds().forEach((id,i)=>{ levelConfigs[id].color=LEVEL_COLORS[i%LEVEL_COLORS.length]; });
+  saveLevelConfigsLocal();
+  renderUI(); renderAll();
+  toast('Cores restauradas! Cada nível agora tem uma cor distinta.','success');
+}
+
+function hexToRgba(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ════════════════════════════════════════════
+//  RENDER — SALARY BAR + CARDS + CHART + STEPS
+// ════════════════════════════════════════════
+function renderUI(){
+  renderSalaryBar();
+  renderTeamOverview();
+  renderCards();
+  renderChart();
+  renderSteps();
+}
+
+function renderSalaryBar(){
+  const ids=getLevelIds();
+  document.getElementById('salaryBar').innerHTML=ids.map(id=>{
+    const c=levelConfigs[id];
+    return `<div class="sal-chip" style="--chip-color:${c.color}" onclick="scrollToCard(${id})">
+      <span class="dot"></span>${c.name} — ${c.salary}</div>`;
+  }).join('');
+}
+
+function renderTeamOverview(){
+  const ids=getLevelIds();
+  const total=technicians.length;
+  let html=`<div class="team-stat"><div class="team-stat-num" style="color:var(--text)">${total}</div><div class="team-stat-label">Total</div></div>`;
+  ids.forEach(id=>{
+    const c=levelConfigs[id];
+    const cnt=technicians.filter(t=>t.level===id).length;
+    html+=`<div class="team-divider"></div><div class="team-stat"><div class="team-stat-num" style="color:${c.color}">${cnt}</div><div class="team-stat-label">${c.badge}</div></div>`;
+  });
+  document.getElementById('teamOverview').innerHTML=html;
+}
+
+function renderCards(){
+  const ids=getLevelIds();
+  const grid=document.getElementById('cardsGrid');
+  let html=ids.map((id,i)=>renderCardHTML(id,i)).join('');
+  html+=`<div class="card-add" onclick="openAddLevelModal()">
+    <span class="card-add-icon">＋</span>
+    <span class="card-add-label">Novo Cargo</span>
+  </div>`;
+  grid.innerHTML=html;
+  ids.forEach(id=>{ renderLevel(id); renderNivelExam(id); });
+}
+
+function renderCardHTML(id,idx){
+  const c=levelConfigs[id];
+  const cg=hexToRgba(c.color,.15);
+  const pillsHTML=c.pills.map(p=>`<span class="pill">${p}</span>`).join('');
+  const sectHTML=c.sections.map(s=>`
+    <div class="detail-section">
+      <p class="detail-label">${s.label}</p>
+      <ul class="detail-list">${s.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  return `<div class="card" id="card-${id}" style="--c:${c.color};--cg:${cg};animation-delay:${idx*0.1}s">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-level-badge">${c.badge}</div>
+        <button class="card-edit-btn" onclick="openEditLevelModal(${id})">✏ Editar cargo</button>
+      </div>
+      <div class="card-salary">${c.salary}</div>
+    </div>
+    <h3>${c.name}</h3><p class="card-subtitle">${c.subtitle}</p>
+    <div class="pill-group">${pillsHTML}</div>
+    <button class="expand-btn" onclick="toggleCard(${id})">Ver detalhes
+      <svg class="expand-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="card-details"><hr class="detail-divider">${sectHTML}</div>
+    <div class="tech-section">
+      <div class="tech-section-header"><span class="tech-label">Técnicos</span><span class="tech-count" id="count-${id}">0</span></div>
+      <div class="tech-avatars" id="avatars-${id}"><span class="tech-empty">Nenhum técnico</span></div>
+      <button class="tech-add-btn" onclick="openAddModal(${id})">+</button>
+    </div>
+    <div class="nivel-exam-section" id="nivel-exam-${id}"></div>
+  </div>`;
+}
+
+function renderChart(){
+  const ids=getLevelIds();
+  const salaries=ids.map(id=>{ const m=levelConfigs[id].salary.replace(/[^\d]/g,''); return parseInt(m)||0; });
+  const max=Math.max(...salaries,1);
+  const html=ids.map((id,i)=>{
+    const c=levelConfigs[id];
+    const w=Math.round((salaries[i]/max)*100);
+    const cg=hexToRgba(c.color,.15);
+    return `<div class="chart-row" style="--c:${c.color};--cg:${cg}">
+      <span class="chart-name">${c.name}</span>
+      <div class="chart-track"><div class="chart-fill" data-width="${w}%"></div></div>
+      <span class="chart-value">${c.salary}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('salaryChart').innerHTML=html;
+  if(ids.length>1){
+    const minS=Math.min(...salaries), maxS=Math.max(...salaries);
+    const pct=minS>0?Math.round(((maxS-minS)/minS)*100):0;
+    document.getElementById('progressSubtitle').textContent=`~${pct}% de crescimento entre o nível de entrada e o topo`;
+  }
+  // animate
+  const chart=document.getElementById('salaryChart');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.querySelectorAll('.chart-fill').forEach((f,i)=>setTimeout(()=>f.style.width=f.dataset.width,i*150)); obs.unobserve(e.target); } });
+  },{threshold:.3});
+  obs.observe(chart);
+}
+
+function renderSteps(){
+  const ids=getLevelIds();
+  const steps=[{num:'1',text:'Certificações NR'},{num:'2',text:'Prática no campo'},{num:'3',text:'Liderança'},{num:'4',text:'Nível Máximo'}];
+  let html='';
+  ids.forEach((id,i)=>{
+    if(i>0) html+=`<span class="step-arrow">→</span>`;
+    html+=`<div class="step-item"><div class="step-num">${i+1}</div><span>${levelConfigs[id].badge}</span></div>`;
+  });
+  document.getElementById('stepsRow').innerHTML=html;
+}
+
+// ════════════════════════════════════════════
+//  LEVEL EDIT MODAL
+// ════════════════════════════════════════════
+let editingLevelId = null;
+
+function openEditLevelModal(id){
+  editingLevelId=id;
+  const c=levelConfigs[id];
+  document.getElementById('levelModalTitle').textContent='Editar Cargo';
+  document.getElementById('levelModalSub').textContent=c.name;
+  document.getElementById('lvBadge').value=c.badge;
+  document.getElementById('lvSalary').value=c.salary;
+  document.getElementById('lvName').value=c.name;
+  document.getElementById('lvSubtitle').value=c.subtitle;
+  document.getElementById('lvPills').value=c.pills.join('\n');
+  document.getElementById('lvDeleteBtn').style.display='';
+  renderColorSwatches(c.color);
+  renderSectionsEditor(c.sections);
+  document.getElementById('levelModalOverlay').classList.add('open');
+}
+
+function openAddLevelModal(){
+  editingLevelId=null;
+  const ids=getLevelIds();
+  const nextId=ids.length>0?Math.max(...ids)+1:1;
+  document.getElementById('levelModalTitle').textContent='Novo Cargo';
+  document.getElementById('levelModalSub').textContent='Preencha os dados do novo nível';
+  document.getElementById('lvBadge').value=`Nível 0${nextId}`;
+  document.getElementById('lvSalary').value='';
+  document.getElementById('lvName').value='';
+  document.getElementById('lvSubtitle').value='';
+  document.getElementById('lvPills').value='';
+  document.getElementById('lvDeleteBtn').style.display='none';
+  renderColorSwatches(PALETTE[nextId%PALETTE.length]);
+  renderSectionsEditor([{label:'Atividades',items:['']}]);
+  document.getElementById('levelModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('lvName').focus(),220);
+}
+
+function closeLevelModal(){ document.getElementById('levelModalOverlay').classList.remove('open'); editingLevelId=null; }
+function handleLevelOverlay(e){ if(e.target===document.getElementById('levelModalOverlay')) closeLevelModal(); }
+
+function renderColorSwatches(selected){
+  document.getElementById('colorSwatches').innerHTML=PALETTE.map(hex=>
+    `<div class="color-swatch${hex===selected?' active':''}" style="background:${hex}" onclick="selectSwatch('${hex}')" title="${hex}"></div>`
+  ).join('');
+}
+function selectSwatch(hex){
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('active',s.style.background===hex||s.getAttribute('onclick').includes(hex)));
+}
+function getSelectedColor(){
+  const a=document.querySelector('.color-swatch.active');
+  return a?a.style.background:PALETTE[0];
+}
+
+function renderSectionsEditor(sections){
+  const el=document.getElementById('sectionsEditor');
+  el.innerHTML='';
+  (sections||[]).forEach((s,i)=>addSectionEditorItem(s.label||'',s.items||[]));
+}
+function addSectionEditor(){ addSectionEditorItem('',''); }
+function addSectionEditorItem(label,items){
+  const el=document.getElementById('sectionsEditor');
+  const div=document.createElement('div');
+  div.className='section-editor-item';
+  div.innerHTML=`<div class="section-editor-header">
+    <input type="text" placeholder="TÍTULO DA SEÇÃO" value="${label}">
+    <button onclick="this.closest('.section-editor-item').remove()">🗑</button>
+  </div>
+  <textarea placeholder="Um item por linha">${Array.isArray(items)?items.join('\n'):items}</textarea>`;
+  el.appendChild(div);
+}
+
+function saveLevelConfig(){
+  const name=document.getElementById('lvName').value.trim();
+  if(!name){ document.getElementById('lvName').focus(); toast('Informe o nome do cargo.','error'); return; }
+  const badge=document.getElementById('lvBadge').value.trim()||`Nível`;
+  const salary=document.getElementById('lvSalary').value.trim()||'—';
+  const subtitle=document.getElementById('lvSubtitle').value.trim();
+  const color=getSelectedColor();
+  const pills=document.getElementById('lvPills').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const sectionEls=document.querySelectorAll('#sectionsEditor .section-editor-item');
+  const sections=[];
+  sectionEls.forEach(sel=>{
+    const lbl=sel.querySelector('input').value.trim();
+    const items=sel.querySelector('textarea').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if(lbl||items.length) sections.push({label:lbl||'Detalhes',items});
+  });
+
+  const ids=getLevelIds();
+  const targetId = editingLevelId!==null ? editingLevelId : (ids.length>0?Math.max(...ids)+1:1);
+  levelConfigs[targetId]={badge,name,subtitle,salary,color,pills,sections};
+  saveLevelConfigsLocal();
+  closeLevelModal();
+  renderUI();
+  renderAll();
+  toast(editingLevelId!==null?'Cargo atualizado!':'Novo cargo adicionado!','success');
+}
+
+function deleteLevelConfirm(){
+  if(!editingLevelId) return;
+  const c=levelConfigs[editingLevelId];
+  const hasTechs=technicians.some(t=>t.level===editingLevelId);
+  if(hasTechs){ toast('Remova os técnicos deste nível antes de excluir.','error'); return; }
+  if(!confirm(`Excluir o cargo "${c.name}"? Esta ação não pode ser desfeita.`)) return;
+  delete levelConfigs[editingLevelId];
+  saveLevelConfigsLocal();
+  closeLevelModal();
+  renderUI();
+  renderAll();
+  toast('Cargo excluído.','info');
+}
+
+// ════════════════════════════════════════════
+//  SUPABASE
+// ════════════════════════════════════════════
+let sb=null;
+function getConfig(){ return {url:'https://gvydctimfpsstixfnqyh.supabase.co',key:'sb_publishable_9w3keSG__NMzod4pwK6g5w_c3Xv32o2'}; }
+
+function initSupabase(){
+  const {url,key}=getConfig();
+  if(!url||!key){ setConnStatus('off'); return false; }
+  try{
+    sb=window.supabase.createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storage:{getItem:()=>null,setItem:()=>{},removeItem:()=>{}}},global:{headers:{'X-Client-Info':'movfibra/1.0'}}});
+    setConnStatus('loading'); return true;
+  }catch(e){ setConnStatus('err'); return false; }
+}
+
+function setConnStatus(state){
+  const dot=document.getElementById('connDot'),label=document.getElementById('connLabel'),banner=document.getElementById('configBanner');
+  if(state==='ok'){ dot.className='conn-dot ok'; label.textContent='Conectado ao Supabase'; if(banner) banner.style.display='none'; }
+  else if(state==='loading'){ dot.className='conn-dot loading'; label.textContent='Conectando…'; }
+  else if(state==='err'){ dot.className='conn-dot err'; label.textContent='Erro de conexão'; if(banner){ banner.style.display='flex'; banner.querySelector('p').textContent='⚠️ Erro ao conectar. Verifique URL e chave.'; } }
+  else { dot.className='conn-dot'; label.textContent='Desconectado'; }
+}
+
+// ════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════
+function toast(msg,type='info'){
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  const el=document.createElement('div');
+  el.className=`toast-msg ${type}`;
+  el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+
+// ════════════════════════════════════════════
+//  CONFIG MODAL
+// ════════════════════════════════════════════
+function openCfg(){ const {url,key}=getConfig(); document.getElementById('cfgUrl').value=url; document.getElementById('cfgKey').value=key; document.getElementById('cfgOverlay').classList.add('open'); }
+function closeCfg(){ document.getElementById('cfgOverlay').classList.remove('open'); }
+function handleCfgOverlay(e){ if(e.target===document.getElementById('cfgOverlay')) closeCfg(); }
+async function saveConfig(){
+  const url=document.getElementById('cfgUrl').value.trim(),key=document.getElementById('cfgKey').value.trim();
+  if(!url||!key){ toast('Preencha URL e chave.','error'); return; }
+  localStorage.setItem('sb_url',url); localStorage.setItem('sb_key',key);
+  closeCfg(); initSupabase(); await loadAll();
+}
+
+// ════════════════════════════════════════════
+//  TECH DATA
+// ════════════════════════════════════════════
+let technicians=[];
+
+async function loadAll(){
+  if(!sb){ loadLocal(); return; }
+  setConnStatus('loading');
+  try{
+    const {data:tecData,error:tecErr}=await sb.from('tecnicos').select('*').order('created_at'); if(tecErr) throw tecErr;
+    const {data:pvData,error:pvErr}=await sb.from('provas').select('*').order('created_at'); if(pvErr) throw pvErr;
+    const {data:prData,error:prErr}=await sb.from('promocoes').select('*').order('created_at'); if(prErr) throw prErr;
+    technicians=tecData.map(t=>({
+      id:t.id,name:t.name,phone:t.phone||'',admission:t.admission||'',city:t.city||'',level:t.level,
+      exams:pvData.filter(p=>p.tecnico_id===t.id).map(p=>({eid:p.id,type:p.type,date:p.exam_date,score:p.score,minScore:p.min_score,fileName:p.file_name||null,fileData:p.file_data||null})),
+      promoHistory:prData.filter(p=>p.tecnico_id===t.id).map(p=>({id:p.id,date:p.promo_date,fromLevel:p.from_level,toLevel:p.to_level,note:p.note||''}))
+    }));
+    setConnStatus('ok'); renderAll();
+  }catch(e){ console.error(e); setConnStatus('err'); loadLocal(); }
+}
+
+const SEED_TECHNICIANS = [
+  {id:1001,name:'João Silva',phone:'',admission:'2023-03-10',city:'Santarém',level:2,exams:[],promoHistory:[]},
+  {id:1002,name:'Maria Souza',phone:'',admission:'2021-07-05',city:'Belém',level:3,exams:[],promoHistory:[]},
+  {id:1003,name:'Carlos Lima',phone:'',admission:'2020-01-01',city:'Marabá',level:5,exams:[],promoHistory:[]}
+];
+
+function loadLocal(){
+  try{
+    const stored=localStorage.getItem('mov_techs_v1');
+    const parsed = stored ? JSON.parse(stored) : null;
+    technicians = (parsed && parsed.length > 0) ? parsed : JSON.parse(JSON.stringify(SEED_TECHNICIANS));
+    saveLocal();
+  }catch(e){ technicians=JSON.parse(JSON.stringify(SEED_TECHNICIANS)); }
+  renderAll();
+}
+function saveLocal(){ localStorage.setItem('mov_techs_v1',JSON.stringify(technicians)); }
+
+async function dbInsertTech(p){ if(!sb) return null; const {data,error}=await sb.from('tecnicos').insert(p).select().single(); if(error) throw error; return data.id; }
+async function dbUpsertTech(t){ if(!sb) return; const row={name:t.name,phone:t.phone||null,admission:t.admission||null,city:t.city||null,level:t.level}; if(typeof t.id==='number'&&t.id>1000000000000){ const {data,error}=await sb.from('tecnicos').insert(row).select().single(); if(error) throw error; t.id=data.id; } else { const {error}=await sb.from('tecnicos').update(row).eq('id',t.id); if(error) throw error; } }
+async function dbDeleteTech(id){ if(!sb) return; const {error}=await sb.from('tecnicos').delete().eq('id',id); if(error) throw error; }
+async function dbInsertProva(p,tid){ if(!sb) return Date.now(); const {data,error}=await sb.from('provas').insert({tecnico_id:tid,type:p.type,exam_date:p.date,score:p.score,min_score:p.minScore,file_name:p.fileName||null,file_data:p.fileData||null}).select().single(); if(error) throw error; return data.id; }
+async function dbDeleteProva(eid){ if(!sb) return; const {error}=await sb.from('provas').delete().eq('id',eid); if(error) throw error; }
+async function dbInsertPromocao(p,tid){ if(!sb) return Date.now(); const {data,error}=await sb.from('promocoes').insert({tecnico_id:tid,from_level:p.fromLevel,to_level:p.toLevel,promo_date:p.date,note:p.note||null}).select().single(); if(error) throw error; return data.id; }
+
+function findTech(id){ return technicians.find(t=>t.id===id); }
+function initials(name){ const p=name.trim().split(/\s+/); return p.length===1?p[0].slice(0,2).toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase(); }
+function fmtDate(d){ if(!d) return'—'; const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
+
+function renderAll(){ getLevelIds().forEach(id=>renderLevel(id)); renderTeamOverview(); renderSalaryBar(); }
+
+function renderLevel(level){
+  const container=document.getElementById('avatars-'+level);
+  const countEl=document.getElementById('count-'+level);
+  if(!container||!countEl) return;
+  const techs=technicians.filter(t=>t.level===level);
+  countEl.textContent=techs.length;
+  if(!techs.length){ container.innerHTML='<span class="tech-empty">Nenhum técnico</span>'; return; }
+  container.innerHTML=techs.map(t=>{
+    const tip=[t.name,t.city,t.phone].filter(Boolean).join(' · ');
+    return `<div class="tech-avatar${t.exams&&t.exams.length?' has-exams':''}" title="${tip}" onclick="openEditModal(${t.id})">${initials(t.name)}</div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+//  NIVEL EXAM
+// ════════════════════════════════════════════
+let nivelExams={};
+
+async function loadNivelExams(){
+  if(!sb){ loadNivelExamsLocal(); return; }
+  try{ const {data,error}=await sb.from('provas_nivel').select('*'); if(error) throw error; nivelExams={}; data.forEach(r=>{ nivelExams[`${r.level}_${r.type}`]={id:r.id,fileName:r.file_name,fileData:r.file_data}; }); renderAllNivelExams(); }
+  catch(e){ loadNivelExamsLocal(); }
+}
+function loadNivelExamsLocal(){ try{ nivelExams=JSON.parse(localStorage.getItem('ftth_nivel_exams')||'{}'); }catch(e){ nivelExams={}; } renderAllNivelExams(); }
+function saveNivelExamsLocal(){ localStorage.setItem('ftth_nivel_exams',JSON.stringify(nivelExams)); }
+function renderAllNivelExams(){ getLevelIds().forEach(renderNivelExam); }
+
+function renderNivelExam(level){
+  const el=document.getElementById('nivel-exam-'+level); if(!el) return;
+  const teorica=nivelExams[`${level}_teorica`], pratica=nivelExams[`${level}_pratica`];
+  const fileHtml=(exam,type)=>exam?`<div class="nivel-exam-file">
+    <div class="nivel-exam-file-info"><span class="nivel-exam-file-icon">📄</span><span class="nivel-exam-file-name" title="${exam.fileName}">${exam.fileName}</span></div>
+    <span class="nivel-exam-file-type ${type}">${type==='teorica'?'Teórica':'Prática'}</span>
+    <div class="nivel-exam-file-actions"><a class="btn-icon" href="${exam.fileData}" download="${exam.fileName}">⬇</a><button class="btn-icon red" onclick="deleteNivelExam(${level},'${type}')">🗑</button></div>
+  </div>`:'';
+  el.innerHTML=`<div class="nivel-exam-header"><span class="nivel-exam-label">📋 Provas do Nível</span></div>
+  <div class="nivel-exam-files">${teorica||pratica?(fileHtml(teorica,'teorica')+fileHtml(pratica,'pratica')):'<span class="nivel-exam-empty">Nenhuma prova anexada ainda</span>'}</div>
+  <div class="nivel-exam-upload">
+    ${!teorica?`<button class="btn-upload-exam" onclick="triggerNivelExamUpload(${level},'teorica')">+ Teórica</button>`:''}
+    ${!pratica?`<button class="btn-upload-exam" onclick="triggerNivelExamUpload(${level},'pratica')">+ Prática</button>`:''}
+  </div>
+  <input class="nivel-exam-input" type="file" id="nivel-exam-input-${level}" accept=".pdf,.jpg,.jpeg,.png" onchange="uploadNivelExam(${level},this)">`;
+}
+
+let pendingNivelUpload=null;
+function triggerNivelExamUpload(level,type){ pendingNivelUpload={level,type}; document.getElementById('nivel-exam-input-'+level).click(); }
+async function uploadNivelExam(level,input){
+  if(!input.files||!input.files[0]||!pendingNivelUpload) return;
+  const {type}=pendingNivelUpload, file=input.files[0];
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const fileData=e.target.result, fileName=file.name, key=`${level}_${type}`;
+    try{
+      if(sb){ const existing=nivelExams[key]; if(existing){ const {error}=await sb.from('provas_nivel').update({file_name:fileName,file_data:fileData}).eq('id',existing.id); if(error) throw error; } else { const {data,error}=await sb.from('provas_nivel').insert({level,type,file_name:fileName,file_data:fileData}).select().single(); if(error) throw error; nivelExams[key]={id:data.id,fileName,fileData}; } }
+      nivelExams[key]=nivelExams[key]?{...nivelExams[key],fileName,fileData}:{id:Date.now(),fileName,fileData};
+      saveNivelExamsLocal(); renderNivelExam(level); toast(`Prova ${type==='teorica'?'Teórica':'Prática'} do Nível ${level} anexada!`,'success');
+    }catch(err){ toast('Erro ao salvar prova: '+err.message,'error'); }
+    input.value=''; pendingNivelUpload=null;
+  };
+  reader.readAsDataURL(file);
+}
+async function deleteNivelExam(level,type){
+  if(!confirm(`Remover a prova ${type==='teorica'?'Teórica':'Prática'} do Nível ${level}?`)) return;
+  const key=`${level}_${type}`;
+  try{ if(sb&&nivelExams[key]){ const {error}=await sb.from('provas_nivel').delete().eq('id',nivelExams[key].id); if(error) throw error; } delete nivelExams[key]; saveNivelExamsLocal(); renderNivelExam(level); toast('Prova removida.','info'); }
+  catch(e){ toast('Erro ao remover: '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════
+//  TECH MODAL
+// ════════════════════════════════════════════
+let currentId=null, currentTab='dados';
+
+function openAddModal(level){
+  currentId=null;
+  const c=levelConfigs[level];
+  document.getElementById('modalTitle').textContent='Adicionar Técnico';
+  document.getElementById('modalSubtitle').textContent=c?c.name:'';
+  document.getElementById('techName').value='';
+  document.getElementById('techPhone').value='';
+  document.getElementById('techAdmission').value='';
+  document.getElementById('techCity').value='';
+  document.getElementById('modalTabs').style.display='none';
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-dados').classList.add('active');
+  const col=c?c.color:'var(--brand)';
+  document.getElementById('dadosActions').innerHTML=`<button class="btn-secondary" onclick="closeModal()">Cancelar</button><button class="btn-primary" style="background:${col};color:#000" onclick="saveTech(${level})">Adicionar</button>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('techName').focus(),220);
+}
+
+function openEditModal(id){
+  currentId=id;
+  const t=findTech(id); if(!t) return;
+  const c=levelConfigs[t.level];
+  document.getElementById('modalTitle').textContent=t.name;
+  document.getElementById('modalSubtitle').textContent=(c?c.name:'')+(c?' · '+c.salary:'');
+  document.getElementById('techName').value=t.name;
+  document.getElementById('techPhone').value=t.phone||'';
+  document.getElementById('techAdmission').value=t.admission||'';
+  document.getElementById('techCity').value=t.city||'';
+  document.getElementById('modalTabs').style.display='flex';
+  switchTab('dados');
+  const col=c?c.color:'var(--brand)';
+  document.getElementById('dadosActions').innerHTML=`<button class="btn-danger" onclick="deleteTech(${id})">Remover</button><button class="btn-secondary" onclick="closeModal()">Cancelar</button><button class="btn-primary" style="background:${col};color:#000;flex:1" onclick="saveTech(${t.level})">Salvar</button>`;
+  renderExams(id); renderPromo(id);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); currentId=null; }
+function handleOverlayClick(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.modal-tab').forEach((btn,i)=>btn.classList.toggle('active',['dados','provas','promocao'][i]===tab));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='provas'&&currentId) renderExams(currentId);
+  if(tab==='promocao'&&currentId) renderPromo(currentId);
+}
+
+async function saveTech(level){
+  const name=document.getElementById('techName').value.trim(); if(!name){ document.getElementById('techName').focus(); return; }
+  const phone=document.getElementById('techPhone').value.trim(), admission=document.getElementById('techAdmission').value, city=document.getElementById('techCity').value.trim();
+  try{
+    if(currentId!==null){ const t=findTech(currentId); if(t){ t.name=name; t.phone=phone; t.admission=admission; t.city=city; } if(sb) await dbUpsertTech(t); toast('Técnico atualizado!','success'); }
+    else{ const newTech={name,phone,admission,city,level,exams:[],promoHistory:[]}; if(sb){ const newId=await dbInsertTech({name,phone:phone||null,admission:admission||null,city:city||null,level}); newTech.id=newId; } else { newTech.id=Date.now(); } technicians.push(newTech); toast('Técnico adicionado!','success'); }
+    saveLocal(); renderAll(); closeModal();
+  }catch(e){ toast('Erro ao salvar: '+e.message,'error'); }
+}
+
+async function deleteTech(id){
+  if(!confirm('Remover este técnico permanentemente?')) return;
+  try{ if(sb) await dbDeleteTech(id); technicians=technicians.filter(t=>t.id!==id); saveLocal(); renderAll(); closeModal(); toast('Técnico removido.','info'); }
+  catch(e){ toast('Erro ao remover: '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════
+//  EXAMS
+// ════════════════════════════════════════════
+function renderExams(id){
+  const t=findTech(id), list=document.getElementById('examList');
+  if(!t||!t.exams||!t.exams.length){ list.innerHTML='<p style="font-size:.8rem;color:var(--muted);font-style:italic">Nenhuma prova registrada ainda.</p>'; return; }
+  list.innerHTML=t.exams.map(ex=>{
+    const pass=parseFloat(ex.score)>=parseFloat(ex.minScore);
+    const att=ex.fileName?`<a class="attach-link" href="${ex.fileData}" download="${ex.fileName}">📎 ${ex.fileName}</a>`:'';
+    return `<div class="exam-item"><div class="exam-item-info"><div class="exam-item-type ${ex.type}">${ex.type==='teorica'?'Teórica':'Prática'}</div><div class="exam-item-meta">${fmtDate(ex.date)}${att}</div></div><div style="text-align:right"><div class="exam-item-score ${pass?'score-pass':'score-fail'}">${ex.score} / ${ex.minScore}</div><div style="font-size:.7rem;color:var(--muted)">${pass?'✓ Aprovado':'✗ Reprovado'}</div></div><div class="exam-item-actions"><button class="btn-icon red" onclick="deleteExam(${id},${ex.eid})">🗑</button></div></div>`;
+  }).join('');
+  document.getElementById('examDate').value=new Date().toISOString().split('T')[0];
+}
+
+async function addExam(){
+  const t=findTech(currentId); if(!t) return;
+  const score=document.getElementById('examScore').value, minScore=document.getElementById('examMin').value||'6.0', date=document.getElementById('examDate').value, type=document.getElementById('examType').value, fileInput=document.getElementById('examFile');
+  if(!score||!date){ toast('Preencha nota e data.','error'); return; }
+  const processFile=async(fileName,fileData)=>{
+    const exam={type,date,score:parseFloat(score).toFixed(1),minScore:parseFloat(minScore).toFixed(1),fileName,fileData};
+    try{ const eid=sb?await dbInsertProva(exam,t.id):Date.now(); exam.eid=eid; if(!t.exams) t.exams=[]; t.exams.push(exam); saveLocal(); renderExams(currentId); renderLevel(t.level); document.getElementById('examScore').value=''; document.getElementById('examFile').value=''; toast('Prova registrada!','success'); }
+    catch(e){ toast('Erro ao salvar prova: '+e.message,'error'); }
+  };
+  if(fileInput.files&&fileInput.files[0]){ const file=fileInput.files[0]; const reader=new FileReader(); reader.onload=e=>processFile(file.name,e.target.result); reader.readAsDataURL(file); }
+  else processFile(null,null);
+}
+
+async function deleteExam(techId,eid){
+  const t=findTech(techId); if(!t) return;
+  try{ if(sb) await dbDeleteProva(eid); t.exams=t.exams.filter(e=>e.eid!==eid); saveLocal(); renderExams(techId); toast('Prova removida.','info'); }
+  catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════
+//  PROMOÇÃO
+// ════════════════════════════════════════════
+function renderPromo(id){
+  const t=findTech(id); if(!t) return;
+  const ids=getLevelIds();
+  const teoriPass=t.exams&&t.exams.some(e=>e.type==='teorica'&&parseFloat(e.score)>=parseFloat(e.minScore));
+  const praticPass=t.exams&&t.exams.some(e=>e.type==='pratica'&&parseFloat(e.score)>=parseFloat(e.minScore));
+  const hasExams=t.exams&&t.exams.length>0;
+  document.getElementById('promoBanner').innerHTML=!hasExams
+    ?`<div class="promo-banner"><span class="promo-icon">📋</span><div class="promo-text"><strong>Sem provas registradas</strong>Registre as provas na aba "Provas" antes de promover.</div></div>`
+    :`<div class="promo-banner ${teoriPass&&praticPass?'green':''}"><span class="promo-icon">${teoriPass&&praticPass?'✅':'⏳'}</span><div class="promo-text"><strong>${teoriPass&&praticPass?'Pronto para promoção':'Aguardando aprovação nas provas'}</strong>Teórica: <b style="color:${teoriPass?'#22c55e':'#ef4444'}">${teoriPass?'Aprovado':'Pendente'}</b> &nbsp;·&nbsp; Prática: <b style="color:${praticPass?'#22c55e':'#ef4444'}">${praticPass?'Aprovado':'Pendente'}</b></div></div>`;
+  document.getElementById('promoHistory').innerHTML=(t.promoHistory&&t.promoHistory.length)
+    ?`<p class="detail-label" style="margin-bottom:8px">Histórico de Promoções</p><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">${t.promoHistory.map(h=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;font-size:.78rem;"><span style="color:var(--muted)">${fmtDate(h.date)}</span> &nbsp;·&nbsp; <b>${levelConfigs[h.fromLevel]?levelConfigs[h.fromLevel].name:h.fromLevel}</b><span style="color:var(--muted)"> → </span><b style="color:${levelConfigs[h.toLevel]?levelConfigs[h.toLevel].color:'#fff'}">${levelConfigs[h.toLevel]?levelConfigs[h.toLevel].name:h.toLevel}</b>${h.note?`<div style="color:var(--muted);margin-top:3px;font-style:italic">${h.note}</div>`:''}</div>`).join('')}</div>`:' ';
+  const nextLevelId=ids[ids.indexOf(t.level)+1];
+  const prevLevelId=ids[ids.indexOf(t.level)-1];
+  const prevName=prevLevelId!==undefined&&levelConfigs[prevLevelId]?levelConfigs[prevLevelId].name:'nível anterior';
+  const nextName=nextLevelId!==undefined&&levelConfigs[nextLevelId]?levelConfigs[nextLevelId].name:'próximo nível';
+  const demoteBtn=prevLevelId!==undefined
+    ?`<button class="btn-demote" onclick="rebaixarTecnico(${id})">⬇ Mover para ${prevName}</button>`
+    :'';
+  document.getElementById('promoActions').innerHTML=`
+    <div style="width:100%">
+      <div class="modal-field"><label>Observação (opcional)</label><input type="text" id="promoNote" placeholder="Ex: Reajuste de função"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        ${demoteBtn}
+        <button class="btn-secondary" onclick="closeModal()">Fechar</button>
+        ${nextLevelId!==undefined?`<button class="btn-promote" onclick="promoverTecnico(${id})">⬆ Promover para ${nextName}</button>`:'<span style="font-size:.8rem;color:var(--muted);align-self:center">Nível máximo</span>'}
+      </div>
+    </div>`;
+}
+
+async function rebaixarTecnico(id){
+  const t=findTech(id); if(!t) return;
+  const ids=getLevelIds(), prevLevelId=ids[ids.indexOf(t.level)-1];
+  if(prevLevelId===undefined) return;
+  const prevName=levelConfigs[prevLevelId]?levelConfigs[prevLevelId].name:prevLevelId;
+  const note=document.getElementById('promoNote')?document.getElementById('promoNote').value.trim():'';
+  if(!confirm(`Mover ${t.name} de ${levelConfigs[t.level]?levelConfigs[t.level].name:t.level} para ${prevName}?`)) return;
+  const promo={date:new Date().toISOString().split('T')[0],fromLevel:t.level,toLevel:prevLevelId,note};
+  try{
+    const pid=sb?await dbInsertPromocao(promo,t.id):Date.now(); promo.id=pid;
+    if(!t.promoHistory) t.promoHistory=[]; t.promoHistory.push(promo);
+    t.level=prevLevelId;
+    if(sb){ const {error}=await sb.from('tecnicos').update({level:t.level}).eq('id',t.id); if(error) throw error; }
+    saveLocal(); renderAll();
+    const c=levelConfigs[t.level];
+    document.getElementById('modalSubtitle').textContent=(c?c.name:t.level)+(c?' · '+c.salary:'');
+    renderPromo(id); toast(`${t.name} movido para ${prevName}.`,'info');
+  }catch(e){ toast('Erro ao mover: '+e.message,'error'); }
+}
+
+async function promoverTecnico(id){
+  const t=findTech(id); if(!t) return;
+  const ids=getLevelIds(), nextLevelId=ids[ids.indexOf(t.level)+1];
+  if(!nextLevelId) return;
+  const note=document.getElementById('promoNote')?document.getElementById('promoNote').value.trim():'';
+  if(!confirm(`Promover ${t.name} para ${levelConfigs[nextLevelId]?levelConfigs[nextLevelId].name:'próximo nível'}?`)) return;
+  const promo={date:new Date().toISOString().split('T')[0],fromLevel:t.level,toLevel:nextLevelId,note};
+  try{
+    const pid=sb?await dbInsertPromocao(promo,t.id):Date.now(); promo.id=pid;
+    if(!t.promoHistory) t.promoHistory=[]; t.promoHistory.push(promo);
+    t.level=nextLevelId;
+    if(sb){ const {error}=await sb.from('tecnicos').update({level:t.level}).eq('id',t.id); if(error) throw error; }
+    saveLocal(); renderAll();
+    const c=levelConfigs[t.level];
+    document.getElementById('modalSubtitle').textContent=(c?c.name:t.level)+(c?' · '+c.salary:'');
+    renderPromo(id); toast(`${t.name} promovido! 🎉`,'success');
+  }catch(e){ toast('Erro ao promover: '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════
+//  PDF
+// ════════════════════════════════════════════
+function hexToRgbArr(hex){
+  // suporta #rrggbb e também rgb(r,g,b) que o browser pode devolver
+  if(!hex) return [124,58,237];
+  const m=hex.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+  if(m) return [parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)];
+  const m2=hex.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  if(m2) return [parseInt(m2[1]),parseInt(m2[2]),parseInt(m2[3])];
+  return [124,58,237];
+}
+
+function gerarPDF(){
+  if(!window.jspdf){ toast('Biblioteca PDF não carregada. Verifique sua conexão e recarregue a página.','error'); return; }
+  try{
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),margin=12;
+  const ids=getLevelIds();
+  const lvlColors=ids.map(id=>hexToRgbArr(levelConfigs[id].color));
+
+  const drawHeader=()=>{
+    doc.setFillColor(10,12,16); doc.rect(0,0,W,18,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(124,58,237);
+    doc.text('MOV FIBRA — PLANO DE CARREIRA',margin,12);
+    doc.setFontSize(8); doc.setTextColor(107,114,128);
+    doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')}`,W-margin,12,{align:'right'});
+  };
+  const drawFooter=(p,total)=>{ doc.setFontSize(7); doc.setTextColor(107,114,128); doc.text(`MOV FIBRA · @queromov · Página ${p} de ${total}`,W/2,H-5,{align:'center'}); };
+
+  drawHeader();
+  let y=26;
+  doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(20,25,40);
+  doc.text('Relatório de Equipe',margin,y); y+=7;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(80,90,115);
+  doc.text(`${technicians.length} técnicos cadastrados · ${new Date().toLocaleDateString('pt-BR')}`,margin,y); y+=8;
+
+  const summaryBody=ids.map((id,i)=>[
+    levelConfigs[id].name, levelConfigs[id].salary,
+    technicians.filter(t=>t.level===id).length.toString(),
+    [...new Set(technicians.filter(t=>t.level===id&&t.city).map(t=>t.city))].join(', ')||'—',
+    technicians.filter(t=>t.level===id&&t.exams&&t.exams.length>0).length.toString()
+  ]);
+  const totalFolha=ids.reduce((sum,id)=>{const s=parseInt((levelConfigs[id].salary||'').replace(/[^\d]/g,''))||0;return sum+s*technicians.filter(t=>t.level===id).length;},0);
+  summaryBody.push(['TOTAL',totalFolha>0?'R$ '+totalFolha.toLocaleString('pt-BR'):'-',technicians.length.toString(),'—',technicians.filter(t=>t.exams&&t.exams.length>0).length.toString()]);
+
+  doc.autoTable({startY:y,head:[['Nível','Salário','Qtd','Cidades','Com Provas']],body:summaryBody,theme:'grid',
+    headStyles:{fillColor:[26,31,43],textColor:[232,234,240],fontStyle:'bold',fontSize:8},
+    bodyStyles:{fillColor:[18,21,28],textColor:[232,234,240],fontSize:8},
+    alternateRowStyles:{fillColor:[22,26,35]},
+    columnStyles:{0:{cellWidth:60},1:{cellWidth:24,halign:'center'},2:{cellWidth:12,halign:'center'},3:{cellWidth:92},4:{cellWidth:22,halign:'center'}},
+    margin:{left:margin,right:margin},
+    didDrawCell:(data)=>{ if(data.section==='body'&&data.column.index===0&&data.row.index<ids.length){ const c=lvlColors[data.row.index]; if(c){ const lvlName=levelConfigs[ids[data.row.index]].name; const bg=data.row.index%2===0?[18,21,28]:[22,26,35]; doc.setFillColor(...bg); doc.rect(data.cell.x,data.cell.y,data.cell.width,data.cell.height,'F'); doc.setFillColor(...c); doc.rect(data.cell.x,data.cell.y,2.5,data.cell.height,'F'); doc.setTextColor(...c); doc.setFont('helvetica','bold'); doc.setFontSize(6.5); const lines=doc.splitTextToSize(lvlName,data.cell.width-7); const lh=3.2,sy=data.cell.y+(data.cell.height-(lines.length*lh))/2+lh; lines.forEach((ln,i)=>doc.text(ln,data.cell.x+5,sy+i*lh)); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(232,234,240); } } },
+    didParseCell:(data)=>{ if(data.section==='body'&&data.column.index===0&&data.row.index<ids.length){ data.cell.text=[]; } }
+  });
+  y=doc.lastAutoTable.finalY+10;
+
+  // ── Resumo por Polo ──
+  const poloXinguTechs=technicians.filter(t=>getPolo(t.city)==='Polo Xingu');
+  const poloTapajosTechs=technicians.filter(t=>getPolo(t.city)==='Polo Tapajós');
+  const outrosTechs=technicians.filter(t=>getPolo(t.city)==='Outros');
+  const poloSummaryBody=[
+    ['Polo Xingu','Altamira · Brasil Novo · Medicilândia · Uruará',poloXinguTechs.length.toString(),[...new Set(poloXinguTechs.filter(t=>t.city).map(t=>t.city))].join(', ')||'—',poloXinguTechs.filter(t=>t.exams&&t.exams.length>0).length.toString()],
+    ['Polo Tapajós','Rurópolis · Santarém · Itaituba',poloTapajosTechs.length.toString(),[...new Set(poloTapajosTechs.filter(t=>t.city).map(t=>t.city))].join(', ')||'—',poloTapajosTechs.filter(t=>t.exams&&t.exams.length>0).length.toString()]
+  ];
+  if(outrosTechs.length) poloSummaryBody.push(['Outros','Demais cidades',outrosTechs.length.toString(),[...new Set(outrosTechs.filter(t=>t.city).map(t=>t.city))].join(', ')||'—',outrosTechs.filter(t=>t.exams&&t.exams.length>0).length.toString()]);
+
+  if(y>H-50){doc.addPage();drawHeader();y=26;}
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(20,25,40);
+  doc.text('Resumo por Polo Operacional',margin,y); y+=4;
+  doc.autoTable({startY:y,head:[['Polo','Cidades','Técnicos','Cidades Presentes','Com Provas']],body:poloSummaryBody,theme:'grid',
+    headStyles:{fillColor:[26,31,43],textColor:[232,234,240],fontStyle:'bold',fontSize:8},
+    bodyStyles:{fillColor:[18,21,28],textColor:[232,234,240],fontSize:8},
+    alternateRowStyles:{fillColor:[22,26,35]},
+    columnStyles:{0:{cellWidth:28},1:{cellWidth:70},2:{cellWidth:16,halign:'center'},3:{cellWidth:94},4:{cellWidth:16,halign:'center'}},
+    margin:{left:margin,right:margin},
+    didDrawCell:(data)=>{if(data.section==='body'&&data.column.index===0){const cols=[[59,130,246],[34,197,94],[107,114,128]];const c=cols[data.row.index]||[124,58,237];doc.setFillColor(...c);doc.rect(data.cell.x,data.cell.y,2.5,data.cell.height,'F');}}
+  });
+  y=doc.lastAutoTable.finalY+10;
+
+  // ── Lista por Polo ──
+  const drawTechTable=(poloTechs,poloLabel,poloColorArr)=>{
+    if(!poloTechs.length) return;
+    doc.addPage(); drawHeader(); y=26;
+    doc.setFillColor(26,31,43); doc.rect(margin,y,W-2*margin,8,'F');
+    doc.setFillColor(...poloColorArr); doc.rect(margin,y,3,8,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...poloColorArr);
+    doc.text(poloLabel,margin+5,y+5.5);
+    doc.setTextColor(107,114,128); doc.setFontSize(7.5);
+    doc.text(`${poloTechs.length} técnico${poloTechs.length!==1?'s':''}`,W-margin-2,y+5.5,{align:'right'});
+    y+=10;
+    const techBody=poloTechs.map(t=>{
+      const teoriOk=t.exams&&t.exams.some(e=>e.type==='teorica'&&parseFloat(e.score)>=parseFloat(e.minScore));
+      const praticOk=t.exams&&t.exams.some(e=>e.type==='pratica'&&parseFloat(e.score)>=parseFloat(e.minScore));
+      const lastPromo=t.promoHistory&&t.promoHistory.length?fmtDate(t.promoHistory[t.promoHistory.length-1].date):'—';
+      const sal=levelConfigs[t.level]?levelConfigs[t.level].salary:'—';
+      return[t.name,t.city||'—',levelConfigs[t.level]?levelConfigs[t.level].name:t.level,sal,t.admission?fmtDate(t.admission):'—',t.exams&&t.exams.length?t.exams.length.toString():'0',teoriOk?'✓':'—',praticOk?'✓':'—',lastPromo];
+    });
+    doc.autoTable({startY:y,head:[['Técnico','Cidade','Nível','Salário','Admissão','Provas','Teo.','Prát.','Última Promoção']],body:techBody,theme:'striped',
+      showHead:'everyPage',rowPageBreak:'avoid',
+      headStyles:{fillColor:[26,31,43],textColor:[232,234,240],fontStyle:'bold',fontSize:7.5},
+      bodyStyles:{fillColor:[18,21,28],textColor:[232,234,240],fontSize:7.5,cellPadding:2.5,minCellHeight:12},
+      alternateRowStyles:{fillColor:[22,26,35]},
+      columnStyles:{0:{cellWidth:46},1:{cellWidth:24},2:{cellWidth:46},3:{cellWidth:22,halign:'center'},4:{cellWidth:17,halign:'center'},5:{cellWidth:11,halign:'center'},6:{cellWidth:13,halign:'center'},7:{cellWidth:13,halign:'center'},8:{cellWidth:19,halign:'center'}},
+      margin:{left:margin,right:margin},
+      didDrawCell:(data)=>{
+        if(data.section==='body'&&data.column.index===2){
+          const lvlName=techBody[data.row.index]?techBody[data.row.index][2]:'';
+          const lvlId=ids.find(id=>levelConfigs[id].name===lvlName);
+          if(lvlId!==undefined){
+            const c=lvlColors[ids.indexOf(lvlId)];
+            doc.setFillColor(...c); doc.rect(data.cell.x,data.cell.y,2,data.cell.height,'F');
+            doc.setTextColor(...c); doc.setFont('helvetica','bold'); doc.setFontSize(6);
+            const lines=doc.splitTextToSize(lvlName,data.cell.width-5);
+            const lh=3.2, sy=data.cell.y+(data.cell.height-(lines.length*lh))/2+lh;
+            lines.forEach((ln,i)=>doc.text(ln,data.cell.x+4,sy+i*lh));
+            doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(232,234,240);
+          }
+        }
+        if(data.section==='body'&&(data.column.index===6||data.column.index===7)){
+          const val=techBody[data.row.index]?techBody[data.row.index][data.column.index]:'';
+          if(val==='✓'){doc.setTextColor(34,197,94);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('✓',data.cell.x+data.cell.width/2,data.cell.y+data.cell.height/2+1,{align:'center'});doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(232,234,240);}
+        }
+      },
+      didParseCell:(data)=>{if(data.section==='body'&&(data.column.index===2||data.column.index===6||data.column.index===7))data.cell.text=[];}
+    });
+    y=doc.lastAutoTable.finalY+8;
+  };
+
+  drawTechTable(poloXinguTechs,'Polo Xingu',[59,130,246]);
+  drawTechTable(poloTapajosTechs,'Polo Tapajós',[34,197,94]);
+  if(outrosTechs.length) drawTechTable(outrosTechs,'Outros',[107,114,128]);
+
+  const techsComProvas=technicians.filter(t=>t.exams&&t.exams.length>0);
+  if(techsComProvas.length){
+    doc.addPage(); drawHeader(); y=26;
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(20,25,40);
+    doc.text('Detalhe de Provas por Técnico',margin,y); y+=6;
+    techsComProvas.forEach(t=>{
+      if(y>H-40){ doc.addPage(); drawHeader(); y=26; }
+      const lvlIdx=ids.indexOf(t.level); const c=lvlIdx>=0?lvlColors[lvlIdx]:[124,58,237];
+      doc.setFillColor(26,31,43); doc.rect(margin,y,W-2*margin,7,'F');
+      doc.setFillColor(...c); doc.rect(margin,y,2.5,7,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(232,234,240);
+      doc.text(t.name,margin+5,y+4.8); doc.setTextColor(...c);
+      doc.text(levelConfigs[t.level]?levelConfigs[t.level].name:String(t.level),margin+80,y+4.8);
+      doc.setTextColor(107,114,128); doc.text(t.city||'',W-margin-2,y+4.8,{align:'right'}); y+=9;
+      doc.autoTable({startY:y,head:[['Tipo','Data','Nota','Mínima','Resultado','Arquivo']],
+        body:t.exams.map(ex=>{ const pass=parseFloat(ex.score)>=parseFloat(ex.minScore); return[ex.type==='teorica'?'Teórica':'Prática',fmtDate(ex.date),ex.score,ex.minScore,pass?'Aprovado':'Reprovado',ex.fileName||'—']; }),
+        theme:'grid',headStyles:{fillColor:[20,24,32],textColor:[160,170,190],fontStyle:'bold',fontSize:7},
+        bodyStyles:{fillColor:[15,18,25],textColor:[210,215,225],fontSize:7,cellPadding:1.8},
+        columnStyles:{0:{cellWidth:20},1:{cellWidth:20},2:{cellWidth:14,halign:'center'},3:{cellWidth:14,halign:'center'},4:{cellWidth:20,halign:'center'},5:{cellWidth:60}},
+        margin:{left:margin,right:margin},tableWidth:'wrap',
+        didParseCell:(data)=>{ if(data.section==='body'&&data.column.index===4) data.cell.text=['']; },
+        didDrawCell:(data)=>{ if(data.section==='body'&&data.column.index===4){ const txt=data.row.raw[4]; const isPass=txt==='Aprovado'; doc.setTextColor(isPass?34:239,isPass?197:68,isPass?94:68); doc.setFont('helvetica','bold'); doc.text(txt,data.cell.x+data.cell.width/2,data.cell.y+data.cell.height/2+1,{align:'center'}); doc.setFont('helvetica','normal'); doc.setTextColor(210,215,225); } }
+      });
+      y=doc.lastAutoTable.finalY+6;
+    });
+  }
+
+  const totalPages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=totalPages;i++){ doc.setPage(i); drawFooter(i,totalPages); }
+  doc.save(`MOV_FIBRA_Plano_Carreira_${new Date().toISOString().slice(0,10)}.pdf`);
+  toast('PDF gerado com sucesso!','success');
+  }catch(err){
+    console.error('Erro ao gerar PDF:',err);
+    toast('Erro ao gerar PDF: '+err.message,'error');
+  }
+}
+
+// ════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════
+function toggleCard(id){ document.getElementById('card-'+id).classList.toggle('expanded'); }
+function scrollToCard(id){ const c=document.getElementById('card-'+id); if(c){ c.scrollIntoView({behavior:'smooth',block:'center'}); c.classList.add('expanded'); } }
+document.addEventListener('keydown',e=>{ if(!document.getElementById('modalOverlay').classList.contains('open')&&!document.getElementById('levelModalOverlay').classList.contains('open')) return; if(e.key==='Escape'){ closeModal(); closeLevelModal(); } });
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+(async function init(){
+  loadLevelConfigs();
+  renderUI();
+  const ready=initSupabase();
+  if(ready){ await loadAll(); await loadNivelExams(); }
+  else { loadLocal(); loadNivelExamsLocal(); }
+  const {url,key}=getConfig();
+  if(url&&key) document.getElementById('configBanner').style.display='none';
+})();
+</script>
+</body>
+</html>
