@@ -1222,7 +1222,7 @@ function switchTab(tab){
   if(tab==='equatorial'&&!equatorialReady){equatorialReady=true;eqInit();}
   if(tab==='inventario'&&!inventarioReady){inventarioReady=true;invInitCharts();}
   if(tab==='mapa'&&!mapaReady){mapaReady=true;document.getElementById('mapa-iframe').src='mapa_rede.html';}
-  if(tab==='carreira'&&!document.getElementById('carreira-iframe').src.includes('plano_carreira')){document.getElementById('carreira-iframe').src='PLANO DE CARREIRA/files/plano_carreira_ftth_7.html';}
+  if(tab==='carreira'&&!document.getElementById('carreira-iframe').src.includes('plano_carreira')){document.getElementById('carreira-iframe').src=/plano_carreira_ftth_7.html';}
   if(tab==='contratos')ctInit();
   if(tab==='material')smInit();
 }
