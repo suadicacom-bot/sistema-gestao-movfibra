@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Extrair Técnicos</title>
+<style>
+  body { font-family: sans-serif; padding: 2rem; background: #0f172a; color: #e2e8f0; }
+  h2 { color: #38bdf8; }
+  textarea { width: 100%; height: 400px; background: #1e293b; color: #a3e635; border: 1px solid #334155; border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 13px; }
+  button { margin-top: 1rem; padding: 10px 24px; background: #0284c7; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; }
+  button:hover { background: #0369a1; }
+  .info { background: #1e293b; border-left: 4px solid #38bdf8; padding: 12px 16px; border-radius: 4px; margin-bottom: 1rem; font-size: 14px; }
+  .ok { color: #4ade80; font-weight: bold; }
+  .err { color: #f87171; font-weight: bold; }
+</style>
+</head>
+<body>
+<h2>Extrator de Técnicos → Supabase</h2>
+<div class="info" id="info">Carregando...</div>
+<textarea id="sql" readonly></textarea>
+<br>
+<button onclick="copiar()">Copiar SQL</button>
+<span id="msg" style="margin-left:12px;"></span>
+
+<script>
+const techs = JSON.parse(localStorage.getItem('mov_techs_v1') || '[]');
+const info = document.getElementById('info');
+const sqlEl = document.getElementById('sql');
+
+if (!techs.length) {
+  info.innerHTML = '<span class="err">Nenhum técnico encontrado no localStorage.</span><br>Abra este arquivo no mesmo navegador onde o Plano de Carreira estava aberto.';
+  sqlEl.value = '-- Sem dados';
+} else {
+  info.innerHTML = `<span class="ok">✅ ${techs.length} técnicos encontrados!</span> Copie o SQL abaixo e cole no Supabase SQL Editor.`;
+  const q = v => v == null ? 'NULL' : `'${String(v).replace(/'/g,"''")}'`;
+  let sql = 'INSERT INTO tecnicos (name, phone, city, admission, level) VALUES\n';
+  sql += techs.map(t => `(${q(t.name)},${q(t.phone||null)},${q(t.city||null)},${q(t.admission||null)},${t.level})`).join(',\n');
+  sql += ';';
+  sqlEl.value = sql;
+}
+
+function copiar() {
+  sqlEl.select();
+  document.execCommand('copy');
+  document.getElementById('msg').textContent = '✅ Copiado!';
+  setTimeout(() => document.getElementById('msg').textContent = '', 3000);
+}
+</script>
+</body>
+</html>
