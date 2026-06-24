@@ -497,6 +497,16 @@ function enableVertexEdit(polyline){
       polyline.setLatLngs(pts);
       rebuildMids();
     });
+    vm.on('dragend', function(){
+      if(polyline._elementId){
+        var coords = JSON.stringify(pts.map(function(p){return[p.lat,p.lng];}));
+        mapaSalvar(polyline._elementId,{coordinates:coords,is_deleted:false,is_new:polyline._isNew||false,
+          name:(polyline._mapData&&polyline._mapData.name)||'',
+          description:(polyline._mapData&&polyline._mapData.desc)||'',
+          link_type:(polyline._mapData&&polyline._mapData.type)||'backbone',
+          color:polyline.options.color||''});
+      }
+    });
     vm.on('contextmenu', function(e){
       L.DomEvent.stopPropagation(e);
       if(pts.length > 2){
@@ -649,9 +659,14 @@ function attachEditListeners(){
         layer._dragEndHandler = function(){
           var ll = layer.getLatLng();
           if(layer._mapData){ layer._mapData.lat = ll.lat; layer._mapData.lng = ll.lng; }
-          // Salva no Supabase se tiver ID
-          if(layer._elementId && window.sbClient){
-            window.sbClient.from('map_elements').update({lat:ll.lat,lng:ll.lng}).eq('element_id',layer._elementId);
+          if(layer._elementId){
+            mapaSalvar(layer._elementId,{
+              coordinates:JSON.stringify([[ll.lat,ll.lng]]),
+              is_deleted:false, is_new:layer._isNew||false,
+              name:(layer._mapData&&layer._mapData.name)||'',
+              description:(layer._mapData&&layer._mapData.desc)||'',
+              link_type:layer._mapType||'pop', color:''
+            });
           }
         };
         layer.on('dragend', layer._dragEndHandler);
@@ -904,8 +919,8 @@ function exportHTML(){
 
 <script>
 // ===== SUPABASE SYNC =====
-const MAPA_URL   = 'https://ryzmcibrcirlsvltbxin.supabase.co';
-const MAPA_KEY   = 'sb_publishable_BEERS6KwSzZ43VTUmOv1sw_sqHMlDK8';
+const MAPA_URL   = 'https://gvydctimfpsstixfnqyh.supabase.co';
+const MAPA_KEY   = 'sb_publishable_9w3keSG__NMzod4pwK6g5w_c3Xv32o2';
 const MAPA_TABLE = 'mapa_rede_elementos';
 var mapaDB = null;
 
