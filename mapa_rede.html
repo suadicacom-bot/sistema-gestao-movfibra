@@ -161,6 +161,7 @@ html,body{width:100%;height:100%;background:#0d0d0d;font-family:'Segoe UI',sans-
 <!-- toolbar -->
 <div id="toolbar">
   <button class="tool-btn" id="btn-edit" onclick="toggleEditMode()">✏️ Modo Edição</button>
+  <button class="tool-btn" id="btn-draw" onclick="toggleDrawMode()" style="background:rgba(0,200,100,.15);border-color:rgba(0,200,100,.4);">➕ Traçar Cabo</button>
   <button class="tool-btn" id="btn-import" onclick="openImportModal()">📂 Importar KMZ / KML</button>
   <button class="tool-btn" onclick="exportHTML()">💾 Salvar Mapa</button>
 </div>
@@ -509,7 +510,100 @@ function enableVertexEdit(polyline){
   rebuildMids();
 }
 
-map.on('click', function(){
+// ===== DRAW MODE =====
+var drawMode = false;
+var drawPts = [];
+var drawPolyline = null;
+var drawPreview = null;
+var drawMarkers = [];
+
+function toggleDrawMode(){
+  if(editMode) toggleEditMode();
+  drawMode = !drawMode;
+  var btn = document.getElementById('btn-draw');
+  if(drawMode){
+    btn.style.background = 'rgba(0,230,100,.35)';
+    btn.style.color = '#00e676';
+    btn.textContent = '⏹ Finalizar Cabo';
+    map.getContainer().style.cursor = 'crosshair';
+    drawPts = [];
+    drawPolyline = L.polyline([], {color:'#00e676', weight:4, opacity:0.9, dashArray:'8,4'}).addTo(map);
+    drawPreview = L.polyline([], {color:'#00e676', weight:2, opacity:0.5, dashArray:'4,4'}).addTo(map);
+    showToast('Clique no mapa para adicionar pontos. Duplo clique ou "Finalizar" para concluir.');
+  } else {
+    finishDraw();
+  }
+}
+
+function finishDraw(){
+  drawMode = false;
+  var btn = document.getElementById('btn-draw');
+  btn.style.background = 'rgba(0,200,100,.15)';
+  btn.style.color = '';
+  btn.textContent = '➕ Traçar Cabo';
+  map.getContainer().style.cursor = '';
+  if(drawPreview){ map.removeLayer(drawPreview); drawPreview=null; }
+  drawMarkers.forEach(function(m){ map.removeLayer(m); }); drawMarkers=[];
+  if(drawPts.length >= 2){
+    if(drawPolyline) map.removeLayer(drawPolyline);
+    // Cria o cabo final e abre modal de propriedades
+    var finalLine = L.polyline(drawPts, {color:'#00e676', weight:4, opacity:0.9, lineCap:'round', lineJoin:'round', interactive:true});
+    finalLine._mapData = {name:'Novo Cabo', desc:'', type:'backbone'};
+    finalLine._elementId = 'draw:'+Date.now();
+    finalLine._isNew = true;
+    var lg = layers['backbone'] || Object.values(layers)[0];
+    if(lg) lg.addLayer(finalLine);
+    else finalLine.addTo(map);
+    elementMap[finalLine._elementId] = finalLine;
+    attachEditToLayer(finalLine);
+    currentEditTarget = finalLine;
+    openEditModal(finalLine);
+  } else {
+    if(drawPolyline){ map.removeLayer(drawPolyline); drawPolyline=null; }
+  }
+  drawPts = [];
+}
+
+function attachEditToLayer(layer){
+  layer._editHandler = function(e){
+    if(!editMode) return;
+    L.DomEvent.stopPropagation(e);
+    if(typeof layer.getLatLngs === 'function'){
+      if(activePolyline === layer){ openEditModal(layer); } else { enableVertexEdit(layer); }
+    } else { openEditModal(layer); }
+  };
+  layer.on('click', layer._editHandler);
+}
+
+map.on('mousemove', function(e){
+  if(!drawMode || drawPts.length === 0) return;
+  drawPreview.setLatLngs([drawPts[drawPts.length-1], e.latlng]);
+});
+
+map.on('dblclick', function(e){
+  if(!drawMode) return;
+  L.DomEvent.stopPropagation(e);
+  // Remove o último ponto duplicado pelo dblclick
+  if(drawPts.length > 1) drawPts.pop();
+  finishDraw();
+});
+
+function showToast(msg){ /* já existe no index, aqui só no mapa standalone */
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#00e676;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;pointer-events:none;';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); },3000);
+}
+
+map.on('click', function(e){
+  if(drawMode){
+    drawPts.push(e.latlng);
+    // Marcador de ponto
+    var pm = L.circleMarker(e.latlng,{radius:4,color:'#00e676',fillColor:'#fff',fillOpacity:1,weight:2}).addTo(map);
+    drawMarkers.push(pm);
+    drawPolyline.setLatLngs(drawPts);
+    return;
+  }
   if(editMode && activePolyline){
     clearVertexEdit();
   }
@@ -535,23 +629,33 @@ function toggleEditMode(){
 function attachEditListeners(){
   Object.values(layers).forEach(function(lg){
     lg.eachLayer(function(layer){
-      layer._editHandler = function(e){
-        if(!editMode) return;
-        L.DomEvent.stopPropagation(e);
-        if(typeof layer.getLatLngs === 'function'){
-          // É um cabo/polyline — ativa edição de vértices
-          if(activePolyline === layer){
-            // Segunda clique: abre modal de propriedades
-            openEditModal(layer);
-          } else {
-            enableVertexEdit(layer);
-          }
-        } else {
-          // É um marcador (POP/Torre) — abre modal direto
+      if(typeof layer.getLatLngs === 'function'){
+        // Cabo/polyline
+        layer._editHandler = function(e){
+          if(!editMode) return;
+          L.DomEvent.stopPropagation(e);
+          if(activePolyline === layer){ openEditModal(layer); } else { enableVertexEdit(layer); }
+        };
+        layer.on('click', layer._editHandler);
+      } else if(layer.dragging){
+        // Marcador (POP/Torre) — habilita arrastar
+        layer.dragging.enable();
+        layer._editHandler = function(e){
+          if(!editMode) return;
+          L.DomEvent.stopPropagation(e);
           openEditModal(layer);
-        }
-      };
-      layer.on('click', layer._editHandler);
+        };
+        layer.on('click', layer._editHandler);
+        layer._dragEndHandler = function(){
+          var ll = layer.getLatLng();
+          if(layer._mapData){ layer._mapData.lat = ll.lat; layer._mapData.lng = ll.lng; }
+          // Salva no Supabase se tiver ID
+          if(layer._elementId && window.sbClient){
+            window.sbClient.from('map_elements').update({lat:ll.lat,lng:ll.lng}).eq('element_id',layer._elementId);
+          }
+        };
+        layer.on('dragend', layer._dragEndHandler);
+      }
     });
   });
 }
@@ -562,6 +666,13 @@ function detachEditListeners(){
       if(layer._editHandler){
         layer.off('click', layer._editHandler);
         delete layer._editHandler;
+      }
+      if(layer.dragging){
+        layer.dragging.disable();
+      }
+      if(layer._dragEndHandler){
+        layer.off('dragend', layer._dragEndHandler);
+        delete layer._dragEndHandler;
       }
     });
   });
