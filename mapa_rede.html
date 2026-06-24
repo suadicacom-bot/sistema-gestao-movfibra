@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -433,6 +433,88 @@ var editMode = false;
 var currentEditTarget = null;
 var selectedColor = "";
 
+// ===== VERTEX EDITING =====
+var activeVertexMarkers = [];
+var activeMidMarkers = [];
+var activePolyline = null;
+
+var vertexIcon = L.divIcon({
+  className:'',
+  html:'<div style="width:12px;height:12px;background:#ff5c00;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,.6);cursor:grab;"></div>',
+  iconSize:[12,12], iconAnchor:[6,6]
+});
+var midIcon = L.divIcon({
+  className:'',
+  html:'<div style="width:9px;height:9px;background:rgba(255,255,255,.5);border:1.5px solid #ff5c00;border-radius:50%;cursor:copy;"></div>',
+  iconSize:[9,9], iconAnchor:[4,4]
+});
+
+function clearVertexEdit(){
+  activeVertexMarkers.forEach(function(m){ map.removeLayer(m); });
+  activeMidMarkers.forEach(function(m){ map.removeLayer(m); });
+  activeVertexMarkers = [];
+  activeMidMarkers = [];
+  if(activePolyline) activePolyline.setStyle({opacity: activePolyline._origOpacity || 0.9});
+  activePolyline = null;
+}
+
+function enableVertexEdit(polyline){
+  clearVertexEdit();
+  activePolyline = polyline;
+  polyline._origOpacity = polyline.options.opacity;
+  polyline.setStyle({opacity:1, weight: (polyline.options.weight||4)+1});
+
+  var latlngs = polyline.getLatLngs();
+  // Flatten in case of multi-segment
+  var pts = latlngs[0] && Array.isArray(latlngs[0]) ? latlngs[0] : latlngs;
+
+  function rebuildMids(){
+    activeMidMarkers.forEach(function(m){ map.removeLayer(m); });
+    activeMidMarkers = [];
+    for(var i=0;i<pts.length-1;i++){
+      (function(idx){
+        var mid = L.latLng(
+          (pts[idx].lat+pts[idx+1].lat)/2,
+          (pts[idx].lng+pts[idx+1].lng)/2
+        );
+        var mm = L.marker(mid,{icon:midIcon, draggable:false, zIndexOffset:900}).addTo(map);
+        mm.on('click', function(e){
+          L.DomEvent.stopPropagation(e);
+          pts.splice(idx+1, 0, L.latLng(mid.lat, mid.lng));
+          polyline.setLatLngs(pts);
+          enableVertexEdit(polyline);
+        });
+        activeMidMarkers.push(mm);
+      })(i);
+    }
+  }
+
+  pts.forEach(function(pt, idx){
+    var vm = L.marker(pt, {icon:vertexIcon, draggable:true, zIndexOffset:1000}).addTo(map);
+    vm.on('drag', function(e){
+      pts[idx] = e.target.getLatLng();
+      polyline.setLatLngs(pts);
+      rebuildMids();
+    });
+    vm.on('contextmenu', function(e){
+      L.DomEvent.stopPropagation(e);
+      if(pts.length > 2){
+        pts.splice(idx,1);
+        polyline.setLatLngs(pts);
+        enableVertexEdit(polyline);
+      }
+    });
+    activeVertexMarkers.push(vm);
+  });
+  rebuildMids();
+}
+
+map.on('click', function(){
+  if(editMode && activePolyline){
+    clearVertexEdit();
+  }
+});
+
 function toggleEditMode(){
   editMode = !editMode;
   var btn = document.getElementById('btn-edit');
@@ -445,6 +527,7 @@ function toggleEditMode(){
     btn.classList.remove('active-edit');
     btn.textContent = '✏️ Modo Edição';
     detachEditListeners();
+    clearVertexEdit();
     map.getContainer().style.cursor = '';
   }
 }
@@ -455,7 +538,18 @@ function attachEditListeners(){
       layer._editHandler = function(e){
         if(!editMode) return;
         L.DomEvent.stopPropagation(e);
-        openEditModal(layer);
+        if(typeof layer.getLatLngs === 'function'){
+          // É um cabo/polyline — ativa edição de vértices
+          if(activePolyline === layer){
+            // Segunda clique: abre modal de propriedades
+            openEditModal(layer);
+          } else {
+            enableVertexEdit(layer);
+          }
+        } else {
+          // É um marcador (POP/Torre) — abre modal direto
+          openEditModal(layer);
+        }
       };
       layer.on('click', layer._editHandler);
     });
