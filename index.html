@@ -753,34 +753,34 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 </div>
 
 <!-- ═══ MODAL INVENTÁRIO ═══ -->
-<div class="overlay" id="inv-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:520px;max-width:96vw;max-height:90vh;overflow-y:auto;">
-    <h2 id="inv-modal-titulo" style="font-size:15px;font-weight:700;margin-bottom:18px;">+ Novo Equipamento</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div class="overlay" id="inv-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:28px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <h2 id="inv-modal-titulo" style="font-size:16px;font-weight:700;margin-bottom:20px;color:#111;">+ Novo Equipamento</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
       <div style="grid-column:1/-1">
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Tipo de Equipamento *</label>
-        <input id="inv-fTipo" type="text" placeholder="Ex: OLT, SWITCH, RACK..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Tipo de Equipamento *</label>
+        <input id="inv-fTipo" type="text" placeholder="Ex: OLT, SWITCH, RACK..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Categoria *</label>
-        <select id="inv-fCat" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Categoria *</label>
+        <select id="inv-fCat" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
           <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
           <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option>
         </select>
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Tipo Inventário</label>
-        <select id="inv-fTipoInv" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Tipo Inventário</label>
+        <select id="inv-fTipoInv" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
           <option value="BASE">BASE</option><option value="SFP">SFP</option>
         </select>
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Fabricante</label>
-        <input id="inv-fFab" type="text" placeholder="Ex: HUAWEI, ZTE, MIKROTIK..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Fabricante</label>
+        <input id="inv-fFab" type="text" placeholder="Ex: HUAWEI, ZTE, MIKROTIK..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Cidade</label>
-        <select id="inv-fCidadeM" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Cidade</label>
+        <select id="inv-fCidadeM" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
           <option value="">— Selecione —</option>
           <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
           <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
@@ -788,21 +788,21 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
         </select>
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">POP / Hostname</label>
-        <input id="inv-fHost" type="text" placeholder="Ex: POP01-STM, CPD-ALT..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">POP / Hostname</label>
+        <input id="inv-fHost" type="text" placeholder="Ex: POP01-STM, CPD-ALT..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Quantidade</label>
-        <input id="inv-fQtd" type="number" min="1" value="1" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Quantidade</label>
+        <input id="inv-fQtd" type="number" min="1" value="1" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Valor Unitário (R$)</label>
-        <input id="inv-fValor" type="text" placeholder="0,00" inputmode="decimal" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Valor Unitário (R$)</label>
+        <input id="inv-fValor" type="text" placeholder="0,00" inputmode="decimal" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
       </div>
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;">
-      <button onclick="invFecharModal()" style="padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--muted);cursor:pointer;font-size:12px;">Cancelar</button>
-      <button onclick="invSalvar()" style="padding:8px 20px;border:none;border-radius:6px;background:#ff5c00;color:#fff;font-weight:700;cursor:pointer;font-size:12px;">Salvar</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid #e5e7eb;">
+      <button onclick="invFecharModal()" style="padding:9px 18px;border:1.5px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;cursor:pointer;font-size:13px;font-weight:600;">Cancelar</button>
+      <button onclick="invSalvar()" style="padding:9px 22px;border:none;border-radius:7px;background:#ff5c00;color:#fff;font-weight:700;cursor:pointer;font-size:13px;">Salvar</button>
     </div>
   </div>
 </div>
