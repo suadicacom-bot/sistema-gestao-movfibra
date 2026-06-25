@@ -10,25 +10,31 @@
 /* ═══ RESET ═══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-/* ═══ VARIÁVEIS ═══ */
+/* ═══ VARIÁVEIS — DARK MODE MODERNO ═══ */
 :root{
-  --black:  #0a0a0a;
-  --dark:   #111111;
+  --black:  #060810;
+  --dark:   #0d0f1a;
   --orange: #ff5c00;
   --orange2:#ff7a2e;
-  --blue:   #1a56db;
-  --green:  #16a34a;
-  --purple: #7c3aed;
-  --teal:   #0891b2;
-  --red:    #dc2626;
+  --blue:   #3b82f6;
+  --green:  #22c55e;
+  --purple: #a855f7;
+  --teal:   #06b6d4;
+  --red:    #ef4444;
   --gold:   #f59e0b;
-  --bg:     #f1f3f7;
-  --card:   #ffffff;
-  --border: #e4e7ef;
-  --text:   #111111;
-  --muted:  #6b7280;
-  --radius: 12px;
-  --shadow: 0 2px 14px rgba(0,0,0,.09);
+  --bg:     #0d0f1a;
+  --surface:#141726;
+  --card:   #1a1d2e;
+  --card2:  #1f2235;
+  --border: rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:   #e2e8f0;
+  --text2:  #cbd5e1;
+  --muted:  #64748b;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,.4);
+  --glow-o: 0 0 30px rgba(255,92,0,.15);
+  --glow-b: 0 0 30px rgba(59,130,246,.15);
 }
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
@@ -75,28 +81,28 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .btn-logout:hover{background:rgba(255,92,0,.3);color:#fff;}
 
 /* ═══ MODAL USUÁRIOS ═══ */
-.usr-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.usr-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
 .usr-overlay.open{display:flex;}
-.usr-box{background:#fff;border-radius:16px;padding:32px 32px 28px;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.2);}
+.usr-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:32px 32px 28px;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.6);}
 .usr-box h2{font-size:16px;font-weight:800;color:var(--text);margin-bottom:24px;display:flex;align-items:center;gap:10px;}
-.usr-tabs{display:flex;gap:4px;background:#f1f3f7;border-radius:8px;padding:3px;margin-bottom:22px;}
+.usr-tabs{display:flex;gap:4px;background:var(--surface);border-radius:8px;padding:3px;margin-bottom:22px;}
 .usr-tab{flex:1;padding:8px;border:none;background:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .2s;}
-.usr-tab.active{background:#fff;color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.usr-tab.active{background:var(--card2);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.3);}
 .usr-panel{display:none;}
 .usr-panel.active{display:block;}
 .usr-field{margin-bottom:14px;}
 .usr-field label{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:5px;}
-.usr-field input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;}
+.usr-field input{width:100%;border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;background:var(--surface);color:var(--text);}
 .usr-field input:focus{border-color:var(--orange);}
 .usr-msg{font-size:12px;margin-top:8px;min-height:18px;text-align:center;}
 .usr-msg.ok{color:var(--green);}
 .usr-msg.err{color:var(--red);}
 .usr-list{max-height:260px;overflow-y:auto;}
-.usr-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:4px;background:#f8f9fc;border:1px solid var(--border);}
+.usr-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:4px;background:var(--surface);border:1px solid var(--border);}
 .usr-row-email{font-size:13px;font-weight:600;color:var(--text);}
 .usr-row-date{font-size:10px;color:var(--muted);}
-.btn-del-usr{background:#fee2e2;color:var(--red);border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
-.btn-del-usr:hover{background:#fca5a5;}
+.btn-del-usr{background:rgba(239,68,68,.15);color:#f87171;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-del-usr:hover{background:rgba(239,68,68,.3);}
 
 /* ═══════════════════════════════════════════════
    HEADER — Preto + Logo MOV em destaque
@@ -160,47 +166,80 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .header-meta span{font-size:10px;color:rgba(255,255,255,.35);display:block;text-transform:uppercase;letter-spacing:.5px;}
 .header-meta strong{font-size:14px;color:rgba(255,255,255,.9);font-weight:700;}
 
-/* ═══ TAB NAV ═══ */
-.tab-nav{
+/* ═══ APP BODY — sidebar layout ═══ */
+.app-body{
   display: flex;
-  padding: 0 36px;
-  gap: 2px;
-  background: #0f0f0f;
+  min-height: calc(100vh - 90px);
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--black);
+  border-right: 1px solid rgba(255,255,255,.07);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 32px;
+  position: sticky;
+  top: 90px;
+  height: calc(100vh - 90px);
+  overflow-y: auto;
+}
+.sidebar-label{
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
+  padding: 0 20px 10px;
+  margin-top: 6px;
 }
 .tab-btn{
-  padding: 13px 26px;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  color: rgba(255,255,255,.38);
-  font-size: 12px;
-  font-weight: 700;
-  font-family: inherit;
-  letter-spacing: .6px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all .2s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
+  padding: 11px 20px;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: rgba(255,255,255,.38);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: .3px;
+  cursor: pointer;
+  transition: all .18s;
+  width: 100%;
+  text-align: left;
   white-space: nowrap;
 }
-.tab-btn:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.04);}
-.tab-btn.active{color:#fff;border-bottom-color:var(--orange);}
-.tab-dot{
-  width: 6px;height:6px;border-radius:50%;
-  background:var(--orange);
-  opacity:0;
-  transition:opacity .2s;
+.tab-btn:hover{
+  color: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.05);
+  border-left-color: rgba(255,92,0,.4);
 }
-.tab-btn.active .tab-dot{opacity:1;}
+.tab-btn.active{
+  color: #fff;
+  background: rgba(255,92,0,.08);
+  border-left-color: var(--orange);
+}
+.tab-btn .tab-icon{font-size:15px;flex-shrink:0;}
+.tab-dot{display:none;}
+
+/* ═══ MAIN CONTENT ═══ */
+.main-content{
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
 
 /* ═══ TAB CONTENT ═══ */
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 
 /* ═══ CONTAINER ═══ */
-.container{max-width:1440px;margin:0 auto;padding:28px 28px 52px;}
+.container{max-width:1400px;margin:0 auto;padding:28px 28px 52px;}
 
 /* ═══ SECTION TITLE ═══ */
 .section-title{
@@ -240,32 +279,36 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
   padding:20px 20px 16px;
   box-shadow:var(--shadow);
   border:1px solid var(--border);
-  border-top:3px solid var(--dark);
+  border-top:3px solid rgba(255,255,255,.1);
   position:relative;overflow:hidden;
-  transition:transform .15s,box-shadow .15s;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
 }
-.kpi-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.13);}
-.kpi-card.blue   {border-top-color:var(--blue);}
-.kpi-card.green  {border-top-color:var(--green);}
-.kpi-card.orange {border-top-color:var(--orange);}
-.kpi-card.purple {border-top-color:var(--purple);}
-.kpi-card.teal   {border-top-color:var(--teal);}
-.kpi-card.navy   {border-top-color:#0f2d4e;}
-.kpi-card.red    {border-top-color:var(--red);}
-.kpi-card.gold   {border-top-color:var(--gold);}
-.kpi-card.black  {border-top-color:var(--black);}
+.kpi-card::before{
+  content:'';position:absolute;inset:0;opacity:.04;pointer-events:none;
+  background:radial-gradient(ellipse at top left, white, transparent 70%);
+}
+.kpi-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.kpi-card.blue   {border-top-color:var(--blue);  box-shadow:var(--shadow),0 0 20px rgba(59,130,246,.08);}
+.kpi-card.green  {border-top-color:var(--green); box-shadow:var(--shadow),0 0 20px rgba(34,197,94,.08);}
+.kpi-card.orange {border-top-color:var(--orange);box-shadow:var(--shadow),0 0 20px rgba(255,92,0,.1);}
+.kpi-card.purple {border-top-color:var(--purple);box-shadow:var(--shadow),0 0 20px rgba(168,85,247,.08);}
+.kpi-card.teal   {border-top-color:var(--teal);  box-shadow:var(--shadow),0 0 20px rgba(6,182,212,.08);}
+.kpi-card.navy   {border-top-color:#3b82f6;}
+.kpi-card.red    {border-top-color:var(--red);   box-shadow:var(--shadow),0 0 20px rgba(239,68,68,.08);}
+.kpi-card.gold   {border-top-color:var(--gold);  box-shadow:var(--shadow),0 0 20px rgba(245,158,11,.08);}
+.kpi-card.black  {border-top-color:rgba(255,255,255,.2);}
 
-.kpi-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px;}
+.kpi-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:8px;}
 .kpi-value{font-size:28px;font-weight:900;line-height:1;color:var(--text);}
 .kpi-sub  {font-size:10px;color:var(--muted);margin-top:6px;}
-.kpi-icon {position:absolute;right:14px;top:14px;font-size:26px;opacity:.07;}
+.kpi-icon {position:absolute;right:14px;top:14px;font-size:26px;opacity:.06;}
 
 .kpi-card.blue   .kpi-value{color:var(--blue);}
 .kpi-card.green  .kpi-value{color:var(--green);}
 .kpi-card.orange .kpi-value{color:var(--orange);}
 .kpi-card.purple .kpi-value{color:var(--purple);}
 .kpi-card.teal   .kpi-value{color:var(--teal);}
-.kpi-card.navy   .kpi-value{color:#0f2d4e;}
+.kpi-card.navy   .kpi-value{color:#60a5fa;}
 .kpi-card.red    .kpi-value{color:var(--red);}
 .kpi-card.gold   .kpi-value{color:var(--gold);}
 
@@ -277,55 +320,55 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 /* ═══ DATA TABLE ═══ */
 .data-table{width:100%;border-collapse:collapse;font-size:12px;}
 .data-table thead th{
-  background:var(--dark);color:#fff;
-  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
-  padding:11px 12px;text-align:left;
+  background:rgba(255,255,255,.04);color:var(--muted);
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  padding:11px 12px;text-align:left;border-bottom:1px solid var(--border2);
 }
 .data-table thead th.right{text-align:right;}
 .data-table thead th.center{text-align:center;}
-.data-table tbody td{padding:9px 12px;border-bottom:1px solid var(--border);}
+.data-table tbody td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
 .data-table tbody td.right{text-align:right;}
 .data-table tbody td.center{text-align:center;}
-.data-table tbody tr:nth-child(even){background:#f8f9fc;}
-.data-table tbody tr:hover{background:#eff3ff;}
-.data-table tfoot td{font-weight:700;font-size:12px;padding:10px 12px;background:#f1f3f9;border-top:2px solid var(--dark);}
+.data-table tbody tr:nth-child(even){background:rgba(255,255,255,.02);}
+.data-table tbody tr:hover{background:rgba(255,92,0,.05);}
+.data-table tfoot td{font-weight:700;font-size:12px;padding:10px 12px;background:rgba(255,255,255,.04);border-top:1px solid var(--border2);color:var(--text);}
 .data-table tfoot td.right{text-align:right;}
 .data-table tfoot td.center{text-align:center;}
 
 /* ═══ BADGE ═══ */
-.badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
-.badge-blue  {background:#dbeafe;color:var(--blue);}
-.badge-green {background:#dcfce7;color:var(--green);}
-.badge-orange{background:#ffedd5;color:#c2410c;}
-.badge-purple{background:#ede9fe;color:var(--purple);}
-.badge-gray  {background:#f1f5f9;color:var(--muted);}
+.badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.badge-blue  {background:rgba(59,130,246,.15);color:#60a5fa;}
+.badge-green {background:rgba(34,197,94,.15);color:#4ade80;}
+.badge-orange{background:rgba(255,92,0,.15);color:#ff7a2e;}
+.badge-purple{background:rgba(168,85,247,.15);color:#c084fc;}
+.badge-gray  {background:rgba(255,255,255,.08);color:var(--muted);}
 
 /* ═══ BAR PROGRESS ═══ */
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
-.bar-label{font-size:11px;color:var(--text);min-width:150px;font-weight:500;}
-.bar-track{flex:1;height:8px;background:#e8eaf0;border-radius:3px;overflow:hidden;}
+.bar-label{font-size:11px;color:var(--text2);min-width:150px;font-weight:500;}
+.bar-track{flex:1;height:8px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
 .bar-fill {height:100%;border-radius:3px;}
 .bar-val  {font-size:11px;color:var(--muted);min-width:85px;text-align:right;}
 
 /* ═══ RANKING ═══ */
-.ranking-item{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f3f3f5;gap:8px;}
+.ranking-item{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:8px;}
 .ranking-item:last-child{border-bottom:none;}
-.rank-bar-wrap{flex:1;height:6px;background:#f0f1f5;border-radius:3px;overflow:hidden;}
+.rank-bar-wrap{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
 .rank-bar{height:100%;background:linear-gradient(90deg,var(--orange),var(--orange2));border-radius:3px;}
 
 /* ═══ FILTROS FTTH ═══ */
 .filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .filter-bar label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
-.filter-bar select{background:white;border:1.5px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:12px;font-family:inherit;}
+.filter-bar select{background:var(--card);border:1px solid var(--border2);color:var(--text);padding:8px 14px;border-radius:8px;font-size:12px;font-family:inherit;}
 .filter-bar select:focus{outline:none;border-color:var(--orange);}
 .ftth-lu{margin-left:auto;font-size:11px;color:var(--muted);}
 .btn-upload{
-  background:var(--dark);color:white;border:none;
+  background:var(--card2);color:var(--text);border:1px solid var(--border2);
   padding:9px 18px;border-radius:8px;font-size:11px;font-weight:700;
-  cursor:pointer;transition:background .2s;font-family:inherit;
+  cursor:pointer;transition:all .2s;font-family:inherit;
   text-transform:uppercase;letter-spacing:.5px;
 }
-.btn-upload:hover{background:var(--orange);}
+.btn-upload:hover{background:var(--orange);border-color:var(--orange);color:#fff;}
 
 /* ═══ FTTH CHARTS ═══ */
 .ftth-bar-area{display:flex;align-items:flex-end;gap:5px;height:200px;border-bottom:1px solid var(--border);}
@@ -343,96 +386,99 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .donut-leg{flex:1;min-width:100px;}
 .donut-li{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
 .donut-ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
-.donut-lt{font-size:11px;color:var(--text);font-weight:500;}
+.donut-lt{font-size:11px;color:var(--text2);font-weight:500;}
 .donut-lv{font-size:10px;color:var(--muted);}
 .oc-row{display:grid;grid-template-columns:110px 1fr 48px;align-items:center;gap:8px;margin-bottom:8px;}
-.oc-label{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.oc-track{height:20px;background:#e8eaf0;border-radius:4px;overflow:hidden;display:flex;}
+.oc-label{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oc-track{height:20px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;display:flex;}
 .oc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
 .oc-pct{font-size:11px;color:var(--muted);text-align:right;font-weight:700;}
 .meta-row{margin-bottom:10px;}
 .meta-head{display:flex;justify-content:space-between;margin-bottom:4px;}
 .meta-city{font-size:12px;color:var(--text);font-weight:600;}
 .meta-pct{font-size:11px;color:var(--muted);}
-.meta-track{position:relative;height:14px;background:#e8eaf0;border-radius:3px;overflow:hidden;}
+.meta-track{position:relative;height:14px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
 .meta-fill{position:absolute;height:100%;background:var(--blue);border-radius:3px;}
 .meta-line{position:absolute;height:100%;width:2px;background:var(--gold);}
 .prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px;}
 .prog-row{display:grid;grid-template-columns:130px 1fr 52px 80px;align-items:center;gap:8px;padding:4px 0;}
-.prog-city{font-size:11px;color:var(--text);}
-.prog-track{height:9px;background:#e8eaf0;border-radius:999px;overflow:hidden;}
+.prog-city{font-size:11px;color:var(--text2);}
+.prog-track{height:9px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
 .prog-fill{height:100%;border-radius:999px;}
 .prog-pct{font-size:11px;color:var(--muted);text-align:right;font-weight:700;}
 .prog-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;text-align:center;text-transform:uppercase;}
-.prog-ok{background:#dcfce7;color:#16a34a;}
-.prog-wn{background:#ffedd5;color:#c2410c;}
-.prog-lw{background:#fee2e2;color:var(--red);}
+.prog-ok{background:rgba(34,197,94,.15);color:#4ade80;}
+.prog-wn{background:rgba(245,158,11,.15);color:#fbbf24;}
+.prog-lw{background:rgba(239,68,68,.15);color:#f87171;}
 .ftth-table thead th{text-align:center;white-space:nowrap;}
 .ftth-table thead th:first-child{text-align:left;}
 .ftth-table tbody td{text-align:center;}
 .ftth-table tbody td:first-child{text-align:left;font-weight:600;}
-.ftth-total td{background:#f1f3f9!important;font-weight:700;color:var(--dark);border-top:2px solid var(--dark);}
+.ftth-total td{background:rgba(255,92,0,.06)!important;font-weight:700;color:var(--text);border-top:1px solid var(--border2);}
 .ftth-tok{color:var(--green);font-weight:700;}
 .ftth-tno{color:var(--red);}
 .ftth-tp{color:var(--blue);font-weight:600;}
 
 /* ═══ EQUATORIAL ═══ */
 .eq-filters input,.eq-filters select{
-  border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;
-  outline:none;background:white;transition:border-color .2s;font-family:inherit;
+  border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;
+  outline:none;background:var(--card);color:var(--text);transition:border-color .2s;font-family:inherit;
 }
 .eq-filters input:focus,.eq-filters select:focus{border-color:var(--orange);}
 .eq-table{width:100%;border-collapse:collapse;font-size:12px;}
-.eq-table thead th{background:#111;color:#fff;text-align:left;padding:10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
-.eq-table td{padding:9px 10px;border-bottom:1px solid #f3f3f5;}
-.eq-table tr:hover td{background:#f8f9ff;}
+.eq-table thead th{background:rgba(255,255,255,.04);color:var(--muted);text-align:left;padding:10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border2);}
+.eq-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text2);}
+.eq-table tr:hover td{background:rgba(255,92,0,.05);}
 .eq-table .num{text-align:right;}
-.eq-mun-badge{background:#dcfce7;color:#166534;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:800;}
+.eq-mun-badge{background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:800;}
 .btn-sm{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:10px;font-weight:700;transition:all .15s;font-family:inherit;}
-.btn-edit{background:#FFF3E0;color:#E65100;}
-.btn-edit:hover{background:#FFE0B2;}
-.btn-delete{background:#FFEBEE;color:#C62828;margin-left:4px;}
-.btn-delete:hover{background:#FFCDD2;}
-.table-footer{font-size:11px;color:#aaa;text-align:right;margin-top:10px;}
+.btn-edit{background:rgba(255,92,0,.15);color:#ff7a2e;}
+.btn-edit:hover{background:rgba(255,92,0,.3);}
+.btn-delete{background:rgba(239,68,68,.15);color:#f87171;margin-left:4px;}
+.btn-delete:hover{background:rgba(239,68,68,.3);}
+.table-footer{font-size:11px;color:var(--muted);text-align:right;margin-top:10px;}
 .status-badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:9px;font-weight:800;text-transform:uppercase;}
 
 /* ═══ SEÇÃO HEADER ═══ */
 .section-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
 .btn-primary{
-  background:var(--dark);color:white;border:none;
+  background:var(--card2);color:var(--text);border:1px solid var(--border2);
   padding:10px 20px;border-radius:8px;font-size:11px;font-weight:800;
-  cursor:pointer;transition:background .2s;font-family:inherit;
+  cursor:pointer;transition:all .2s;font-family:inherit;
   text-transform:uppercase;letter-spacing:.5px;
 }
-.btn-primary:hover{background:var(--orange);}
+.btn-primary:hover{background:var(--orange);border-color:var(--orange);color:#fff;}
 
 /* ═══ MODAL ═══ */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .overlay.open{display:flex;}
-.modal{background:white;border-radius:16px;padding:30px 34px;width:100%;max-width:500px;box-shadow:0 28px 70px rgba(0,0,0,.35);animation:slideUp .2s ease;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:30px 34px;width:100%;max-width:500px;box-shadow:0 28px 80px rgba(0,0,0,.6);animation:slideUp .2s ease;}
 @keyframes slideUp{from{transform:translateY(22px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-.modal h3{font-size:17px;margin-bottom:22px;color:var(--dark);font-weight:800;}
+.modal h3{font-size:17px;margin-bottom:22px;color:var(--text);font-weight:800;}
 .form-group{margin-bottom:14px;}
-.form-group label{display:block;font-size:10px;font-weight:800;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
-.form-group input,.form-group select{width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit;}
+.form-group label{display:block;font-size:10px;font-weight:800;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group input,.form-group select{width:100%;border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit;background:var(--surface);color:var(--text);}
 .form-group input:focus,.form-group select:focus{border-color:var(--orange);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;}
-.btn-cancel{padding:11px 22px;border-radius:8px;border:none;background:#f0f0f0;color:#555;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;}
-.btn-cancel:hover{background:#e0e0e0;}
-.btn-save{padding:11px 24px;border-radius:8px;border:none;background:var(--dark);color:white;cursor:pointer;font-size:13px;font-weight:700;transition:background .2s;font-family:inherit;}
-.btn-save:hover{background:var(--orange);}
+.btn-cancel{padding:11px 22px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .2s;}
+.btn-cancel:hover{background:var(--card2);color:var(--text);}
+.btn-save{padding:11px 24px;border-radius:8px;border:none;background:var(--orange);color:white;cursor:pointer;font-size:13px;font-weight:700;transition:background .2s;font-family:inherit;}
+.btn-save:hover{background:var(--orange2);}
 
 /* ═══ TOAST & SPINNER ═══ */
-.toast{position:fixed;bottom:28px;right:28px;padding:14px 22px;border-radius:8px;color:white;font-size:13px;font-weight:700;opacity:0;transform:translateY(16px);transition:all .3s ease;z-index:2000;pointer-events:none;}
+.toast{position:fixed;bottom:28px;right:28px;padding:14px 22px;border-radius:10px;color:white;font-size:13px;font-weight:700;opacity:0;transform:translateY(16px);transition:all .3s ease;z-index:2000;pointer-events:none;}
 .toast.visible{opacity:1;transform:translateY(0);}
-.toast.success{background:#16a34a;}
-.toast.error{background:var(--red);}
-.toast.info{background:var(--dark);}
-.spinner-wrap{text-align:center;padding:52px 20px;color:#bbb;}
-.spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:var(--orange);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 14px;}
+.toast.success{background:linear-gradient(135deg,#16a34a,#15803d);}
+.toast.error{background:linear-gradient(135deg,var(--red),#b91c1c);}
+.toast.info{background:linear-gradient(135deg,#1e293b,#0f172a);border:1px solid var(--border2);}
+.spinner-wrap{text-align:center;padding:52px 20px;color:var(--muted);}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--orange);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 14px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+/* ═══ INPUTS DARK GLOBAIS ═══ */
+input,select,textarea{color-scheme:dark;}
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:1100px){
@@ -443,11 +489,13 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 }
 @media(max-width:700px){
   .kpi-row-6,.kpi-row-4{grid-template-columns:repeat(2,1fr);}
-  .tab-btn{padding:11px 14px;font-size:10px;}
   .header-top{padding:0 16px;height:76px;}
-  .tab-nav{padding:0 16px;}
   .container{padding:16px 14px 44px;}
   .mov-logo{width:100px;height:56px;}
+  .sidebar{width:52px;padding:16px 0;}
+  .sidebar .tab-btn{padding:12px 0;justify-content:center;}
+  .sidebar .tab-btn span:not(.tab-icon){display:none;}
+  .sidebar-label{display:none;}
 }
 </style>
 </head>
@@ -521,30 +569,38 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     </div>
   </div>
 
-  <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="ftth" onclick="switchTab('ftth')">
-      <span class="tab-dot"></span>🌐 Rede FTTH
-    </button>
-    <button class="tab-btn" data-tab="equatorial" onclick="switchTab('equatorial')">
-      <span class="tab-dot"></span>⚡ Projetos Equatorial
-    </button>
-    <button class="tab-btn" data-tab="inventario" onclick="switchTab('inventario')">
-      <span class="tab-dot"></span>📦 Inventário de Equipamentos
-    </button>
-    <button class="tab-btn" data-tab="mapa" onclick="switchTab('mapa')">
-      <span class="tab-dot"></span>🗺️ Mapa de Rede
-    </button>
-    <button class="tab-btn" data-tab="carreira" onclick="switchTab('carreira')">
-      <span class="tab-dot"></span>🎓 Plano de Carreira
-    </button>
-    <button class="tab-btn" data-tab="contratos" onclick="switchTab('contratos')">
-      <span class="tab-dot"></span>📄 Contratos POPs/Torres
-    </button>
-    <button class="tab-btn" data-tab="material" onclick="switchTab('material')">
-      <span class="tab-dot"></span>🛒 Solicitação de Material
-    </button>
-  </nav>
 </header>
+
+<div class="app-body">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sidebar-label">Menu</div>
+  <button class="tab-btn" data-tab="contratos" onclick="switchTab('contratos')">
+    <span class="tab-icon">📄</span>Contratos POPs/Torres
+  </button>
+  <button class="tab-btn" data-tab="inventario" onclick="switchTab('inventario')">
+    <span class="tab-icon">📦</span>Inventário
+  </button>
+  <button class="tab-btn" data-tab="mapa" onclick="switchTab('mapa')">
+    <span class="tab-icon">🗺️</span>Mapa de Rede
+  </button>
+  <button class="tab-btn" data-tab="carreira" onclick="switchTab('carreira')">
+    <span class="tab-icon">🎓</span>Plano de Carreira
+  </button>
+  <button class="tab-btn" data-tab="equatorial" onclick="switchTab('equatorial')">
+    <span class="tab-icon">⚡</span>Projetos Equatorial
+  </button>
+  <button class="tab-btn active" data-tab="ftth" onclick="switchTab('ftth')">
+    <span class="tab-icon">🌐</span>Rede FTTH
+  </button>
+  <button class="tab-btn" data-tab="material" onclick="switchTab('material')">
+    <span class="tab-icon">🛒</span>Solicitação de Material
+  </button>
+</nav>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="main-content">
 
 <!-- ═══════════════════════════════════════════════════
      TAB 1 — REDE FTTH
@@ -705,48 +761,73 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <div class="kpi-card blue"><div class="kpi-icon">🗼</div><div class="kpi-label">POPs (Hostnames)</div><div class="kpi-value" id="inv-kpi-pops">—</div><div class="kpi-sub">pontos de presença únicos</div></div>
   </div>
 
-  <!-- Filtros + botão novo -->
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
-    <div class="section-title" style="margin:0;flex:1">Lista de Equipamentos</div>
-    <input id="inv-busca" type="text" placeholder="Buscar tipo, fabricante, POP..." oninput="invFiltrar()"
-      style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;width:220px;background:var(--surface);color:var(--text)">
-    <select id="inv-fCategoria" onchange="invFiltrar()"
-      style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
-      <option value="">Todas as categorias</option>
-      <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
-      <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option><option>SFP</option>
-    </select>
-    <select id="inv-fCidade" onchange="invFiltrar()"
-      style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
-      <option value="">Todas as cidades</option>
-      <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
-      <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
-      <option>BRASIL NOVO</option><option>MOJUÍ</option><option>PLACAS</option>
-    </select>
-    <button class="btn-upload" style="background:#ff5c00;color:#fff;border:none;cursor:pointer;padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;" onclick="invAbrirModal()">+ Novo Equipamento</button>
+  <!-- Toolbar: sub-views + filtros + botões -->
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+    <!-- Sub-visualização -->
+    <div style="display:flex;gap:3px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:3px;">
+      <button id="inv-v-lista" onclick="invVisualizacao('lista')"
+        style="padding:6px 14px;border:none;border-radius:7px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;background:#ff5c00;color:#fff;transition:.15s;">
+        📋 Lista Geral
+      </button>
+      <button id="inv-v-pops" onclick="invVisualizacao('pops')"
+        style="padding:6px 14px;border:none;border-radius:7px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;background:transparent;color:rgba(255,255,255,.45);transition:.15s;">
+        🗼 Por POP
+      </button>
+    </div>
+
+    <div class="section-title" style="margin:0;flex:1;min-width:100px">Lista de Equipamentos</div>
+
+    <!-- Filtros (só visíveis na lista geral) -->
+    <div id="inv-filtros-wrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input id="inv-busca" type="text" placeholder="Buscar tipo, fabricante, POP..." oninput="invFiltrar()"
+        style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;width:210px;background:var(--surface);color:var(--text)">
+      <select id="inv-fCategoria" onchange="invFiltrar()"
+        style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
+        <option value="">Todas as categorias</option>
+        <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
+        <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option><option>SFP</option>
+      </select>
+      <select id="inv-fCidade" onchange="invFiltrar()"
+        style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--surface);color:var(--text)">
+        <option value="">Todas as cidades</option>
+        <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
+        <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
+        <option>BRASIL NOVO</option><option>MOJUÍ</option><option>PLACAS</option>
+      </select>
+    </div>
+
+    <button onclick="invRelatorio()"
+      style="padding:7px 14px;border:1px solid rgba(255,255,255,.15);border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;background:transparent;color:#94a3b8;cursor:pointer;">
+      📄 Relatório
+    </button>
+    <button style="background:#ff5c00;color:#fff;border:none;cursor:pointer;padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;" onclick="invAbrirModal()">
+      + Novo Equipamento
+    </button>
   </div>
 
-  <!-- Tabela de equipamentos -->
-  <div class="panel" style="padding:0;overflow:hidden;margin-bottom:24px;">
-    <table class="data-table" id="inv-tabela">
-      <thead>
-        <tr>
-          <th>Tipo de Equipamento</th>
-          <th>Categoria</th>
-          <th>Inventário</th>
-          <th>Fabricante</th>
-          <th>Cidade</th>
-          <th>POP / Hostname</th>
-          <th class="center">Qtd</th>
-          <th class="right">Vlr. Unit.</th>
-          <th class="right">Vlr. Total</th>
-          <th class="center">Ações</th>
-        </tr>
-      </thead>
-      <tbody id="inv-tbody">
-        <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:32px">Carregando equipamentos...</td></tr>
-      </tbody>
-    </table>
+  <!-- VIEW: Lista Geral -->
+  <div id="inv-view-lista" style="margin-bottom:24px;">
+    <div class="panel" style="padding:0;overflow:hidden;">
+      <table class="data-table" id="inv-tabela">
+        <thead>
+          <tr>
+            <th>Tipo de Equipamento</th><th>Categoria</th><th>Inv.</th>
+            <th>Modelo</th><th>Fabricante</th><th>Cidade</th>
+            <th>POP</th><th>Hostname</th>
+            <th class="center">Qtd</th><th class="right">Vlr. Unit.</th>
+            <th class="right">Vlr. Total</th><th class="center">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="inv-tbody">
+          <tr><td colspan="12" style="text-align:center;color:var(--muted);padding:32px">Carregando equipamentos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- VIEW: Por POP -->
+  <div id="inv-view-pops" style="display:none;margin-bottom:24px;">
+    <div id="inv-pops-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;"></div>
   </div>
 
 </div>
@@ -754,33 +835,53 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 
 <!-- ═══ MODAL INVENTÁRIO ═══ -->
 <div class="overlay" id="inv-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:14px;padding:28px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);">
-    <h2 id="inv-modal-titulo" style="font-size:16px;font-weight:700;margin-bottom:20px;color:#111;">+ Novo Equipamento</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+  <div style="background:#1a1d2e;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:28px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.7);">
+    <h2 id="inv-modal-titulo" style="font-size:16px;font-weight:700;margin-bottom:20px;color:#e2e8f0;">+ Novo Equipamento</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <!-- Linha 1: Tipo (full width) -->
       <div style="grid-column:1/-1">
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Tipo de Equipamento *</label>
-        <input id="inv-fTipo" type="text" placeholder="Ex: OLT, SWITCH, RACK..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Tipo de Equipamento *</label>
+        <input id="inv-fTipo" type="text" placeholder="Ex: OLT, SWITCH, RACK..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
       </div>
+
+      <!-- Linha 2: Modelo (full width) -->
+      <div style="grid-column:1/-1">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Modelo</label>
+        <input id="inv-fModelo" type="text" placeholder="Ex: MA5800-X7, S5732-H24S6Q..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
+      </div>
+
+      <!-- Linha 3: Categoria | Tipo Inventário -->
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Categoria *</label>
-        <select id="inv-fCat" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Categoria *</label>
+        <select id="inv-fCat" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
           <option>ATIVO REDE</option><option>ATIVO ELETRICO</option><option>ESTRUTURA</option>
           <option>PASSIVO ELETRICO</option><option>PASSIVO OPTICO</option>
         </select>
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Tipo Inventário</label>
-        <select id="inv-fTipoInv" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Tipo Inventário</label>
+        <select id="inv-fTipoInv" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
           <option value="BASE">BASE</option><option value="SFP">SFP</option>
         </select>
       </div>
+
+      <!-- Linha 4: Fabricante | Próprio/Swap -->
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Fabricante</label>
-        <input id="inv-fFab" type="text" placeholder="Ex: HUAWEI, ZTE, MIKROTIK..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Fabricante</label>
+        <input id="inv-fFab" type="text" placeholder="Ex: HUAWEI, ZTE, MIKROTIK..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Cidade</label>
-        <select id="inv-fCidadeM" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Próprio / Swap</label>
+        <select id="inv-fProprio" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
+          <option value="PROPRIO">PROPRIO</option><option value="SWAP">SWAP</option>
+        </select>
+      </div>
+
+      <!-- Linha 5: Cidade | POP -->
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Cidade</label>
+        <select id="inv-fCidadeM" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
           <option value="">— Selecione —</option>
           <option>SANTARÉM</option><option>ALTAMIRA</option><option>ITAITUBA</option><option>URUARÁ</option>
           <option>RURÓPOLIS</option><option>MEDICILÂNDIA</option><option>BELTERRA</option>
@@ -788,20 +889,33 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
         </select>
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">POP / Hostname</label>
-        <input id="inv-fHost" type="text" placeholder="Ex: POP01-STM, CPD-ALT..." style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">POP (nome amigável)</label>
+        <input id="inv-fPop" type="text" placeholder="Ex: POP01, DATA CENTER..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
+      </div>
+
+      <!-- Linha 6: Hostname | Serviço -->
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Hostname (código técnico)</label>
+        <input id="inv-fHost" type="text" placeholder="Ex: PA_STM_AR01..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Quantidade</label>
-        <input id="inv-fQtd" type="number" min="1" value="1" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Serviço</label>
+        <input id="inv-fServico" type="text" placeholder="Ex: REDE FTTH, ANEL LINK..." style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
+      </div>
+
+      <!-- Linha 7: Qtd | Valor -->
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Quantidade</label>
+        <input id="inv-fQtd" type="number" min="1" value="1" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:5px;">Valor Unitário (R$)</label>
-        <input id="inv-fValor" type="text" placeholder="0,00" inputmode="decimal" style="width:100%;padding:9px 12px;border:1.5px solid #d1d5db;border-radius:7px;background:#f9fafb;color:#111;font-size:13px;outline:none;">
+        <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px;">Valor Unitário (R$)</label>
+        <input id="inv-fValor" type="text" placeholder="0,00" inputmode="decimal" style="width:100%;padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#0d0f1a;color:#e2e8f0;font-size:13px;outline:none;">
       </div>
+
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid #e5e7eb;">
-      <button onclick="invFecharModal()" style="padding:9px 18px;border:1.5px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;cursor:pointer;font-size:13px;font-weight:600;">Cancelar</button>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);">
+      <button onclick="invFecharModal()" style="padding:9px 18px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:transparent;color:#94a3b8;cursor:pointer;font-size:13px;font-weight:600;">Cancelar</button>
       <button onclick="invSalvar()" style="padding:9px 22px;border:none;border-radius:7px;background:#ff5c00;color:#fff;font-weight:700;cursor:pointer;font-size:13px;">Salvar</button>
     </div>
   </div>
@@ -832,12 +946,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <!-- ═══════════════════════════════════════════════════
      TAB 4 — MAPA DE REDE
 ════════════════════════════════════════════════════ -->
-<div id="tab-mapa" class="tab-content" style="height:calc(100vh - 145px);padding:0;overflow:hidden;">
+<div id="tab-mapa" class="tab-content" style="height:calc(100vh - 90px);padding:0;overflow:hidden;">
   <iframe id="mapa-iframe" src="" style="width:100%;height:100%;border:none;display:block;"></iframe>
 </div>
 
 <!-- ═══ TAB PLANO DE CARREIRA ═══ -->
-<div id="tab-carreira" class="tab-content" style="height:calc(100vh - 145px);padding:0;overflow:hidden;">
+<div id="tab-carreira" class="tab-content" style="height:calc(100vh - 90px);padding:0;overflow:hidden;">
   <iframe id="carreira-iframe" src="" style="width:100%;height:100%;border:none;display:block;"></iframe>
 </div>
 
@@ -855,12 +969,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <div class="section-header">
       <div style="font-size:13px;font-weight:700;">Lista de Contratos</div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="ct-busca" placeholder="🔍 Buscar..." oninput="ctFiltrar()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;outline:none;font-family:inherit;">
-        <select id="ct-filtro-tipo" onchange="ctFiltrar()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-family:inherit;">
+        <input type="text" id="ct-busca" placeholder="🔍 Buscar..." oninput="ctFiltrar()" style="border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12px;outline:none;font-family:inherit;background:var(--surface);color:var(--text);">
+        <select id="ct-filtro-tipo" onchange="ctFiltrar()" style="border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);">
           <option value="">Todos os tipos</option>
           <option>POP</option><option>TORRE</option><option>ADITIVO</option>
         </select>
-        <select id="ct-filtro-situacao" onchange="ctFiltrar()" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-family:inherit;">
+        <select id="ct-filtro-situacao" onchange="ctFiltrar()" style="border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);">
           <option value="">Todas as situações</option>
           <option>NO PRAZO</option><option>VENCENDO</option><option>VENCIDO</option><option>RENOVADO</option>
         </select>
@@ -938,6 +1052,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 </div>
 </div>
 
+</div><!-- /main-content -->
+</div><!-- /app-body -->
+
 <!-- Modal Solicitação -->
 <div class="overlay" id="sm-overlay">
   <div class="modal" style="max-width:660px;max-height:90vh;overflow-y:auto;">
@@ -1005,7 +1122,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
       </div>
     </div>
     <!-- Preview calculado -->
-    <div id="ftth-np-preview" style="background:#f8f9fc;border:1.5px solid var(--border);border-radius:8px;padding:14px;margin-top:4px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+    <div id="ftth-np-preview" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px;margin-top:4px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <div style="text-align:center;">
         <div style="font-size:10px;color:var(--muted);font-weight:700;">PORTAS VAGAS</div>
         <div id="ftth-np-vagas" style="font-size:18px;font-weight:800;color:#dc2626;">—</div>
@@ -1031,9 +1148,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
   <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto;">
     <h3>⚙ Catálogo de Materiais</h3>
     <div style="display:flex;gap:8px;margin:14px 0 10px;">
-      <input type="text" id="cat-fNome" placeholder="Nome do material" style="flex:2;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;">
-      <input type="text" id="cat-fUnidade" placeholder="un/m/rolo" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;">
-      <input type="text" id="cat-fValor" placeholder="0,00" inputmode="decimal" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;">
+      <input type="text" id="cat-fNome" placeholder="Nome do material" style="flex:2;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);">
+      <input type="text" id="cat-fUnidade" placeholder="un/m/rolo" style="flex:1;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);">
+      <input type="text" id="cat-fValor" placeholder="0,00" inputmode="decimal" style="flex:1;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;background:var(--surface);color:var(--text);">
       <button id="cat-btn-salvar" class="btn-save" style="padding:8px 16px;white-space:nowrap;" onclick="catSalvar()">+ Adicionar</button>
       <button id="cat-btn-cancelar" class="btn-sm" style="padding:8px 12px;white-space:nowrap;display:none;background:#6b7280;color:#fff;border:none;border-radius:6px;cursor:pointer;" onclick="catCancelarEdicao()">Cancelar</button>
     </div>
@@ -1050,7 +1167,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <!-- ═══ MODAL USUÁRIOS ═══ -->
 <div class="usr-overlay" id="usr-overlay">
   <div class="usr-box">
-    <h2>👥 Gerenciar Usuários <span style="margin-left:auto;font-size:20px;cursor:pointer;color:#aaa" onclick="closeUsrModal()">×</span></h2>
+    <h2>👥 Gerenciar Usuários <span style="margin-left:auto;font-size:20px;cursor:pointer;color:#94a3b8" onclick="closeUsrModal()">×</span></h2>
     <div class="usr-tabs">
       <button class="usr-tab active" onclick="usrTab('cadastrar',this)">➕ Cadastrar</button>
       <button class="usr-tab" onclick="usrTab('listar',this)">📋 Usuários Ativos</button>
@@ -1074,7 +1191,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     <!-- LISTAR -->
     <div class="usr-panel" id="usr-listar">
       <div class="usr-list" id="usr-list-content">
-        <div style="text-align:center;color:#aaa;padding:20px">Carregando...</div>
+        <div style="text-align:center;color:#64748b;padding:20px">Carregando...</div>
       </div>
       <div class="modal-actions" style="margin-top:16px">
         <button class="btn-cancel" onclick="closeUsrModal()">Fechar</button>
@@ -1173,7 +1290,7 @@ async function usrCarregarLista(){
   el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px">Carregando...</div>';
   const {data,error}=await authDB.from('app_usuarios').select('*').order('criado_em',{ascending:false});
   if(error||!data||!data.length){
-    el.innerHTML='<div style="text-align:center;color:#aaa;padding:20px">Nenhum usuário cadastrado ainda.</div>';
+    el.innerHTML='<div style="text-align:center;color:#64748b;padding:20px">Nenhum usuário cadastrado ainda.</div>';
     return;
   }
   el.innerHTML=data.map(u=>`<div class="usr-row">
@@ -1194,7 +1311,7 @@ function switchTab(tab){
   if(tab==='equatorial'&&!equatorialReady){equatorialReady=true;eqInit();}
   if(tab==='inventario'&&!inventarioReady){inventarioReady=true;invCarregar();}
   if(tab==='mapa'&&!mapaReady){mapaReady=true;document.getElementById('mapa-iframe').src='mapa_rede.html';}
-  if(tab==='carreira'&&!document.getElementById('carreira-iframe').src.includes('plano_carreira')){document.getElementById('carreira-iframe').src='plano_carreira_ftth_7.html';}
+  if(tab==='carreira'&&!document.getElementById('carreira-iframe').src.includes('plano_carreira')){document.getElementById('carreira-iframe').src='PLANO DE CARREIRA/files/plano_carreira_ftth_7.html';}
   if(tab==='contratos')ctInit();
   if(tab==='material')smInit();
 }
@@ -1417,7 +1534,7 @@ function eqRanking(){
     <div class="ranking-item">
       <span style="min-width:95px;font-size:11px;font-weight:600">${m}</span>
       <div class="rank-bar-wrap"><div class="rank-bar" style="width:${(v.pts/max*100).toFixed(1)}%"></div></div>
-      <span style="font-size:11px;color:#555;min-width:55px;text-align:right">${eF(v.pts)} pts</span>
+      <span style="font-size:11px;color:#94a3b8;min-width:55px;text-align:right">${eF(v.pts)} pts</span>
       <span style="font-size:11px;color:#ff5c00;font-weight:700;min-width:80px;text-align:right;margin-left:6px">${eBRL(v.custo)}</span>
     </div>`).join('');
 }
@@ -1430,13 +1547,13 @@ function eqRenderTabela(lista){
       <td style="color:#ccc;font-size:11px">${i+1}</td>
       <td style="font-family:monospace;font-size:11px">${r.protocolo}</td>
       <td><span class="eq-mun-badge">${r.municipio}</span></td>
-      <td class="num" style="font-weight:700;color:#1a56db">${eF(r.qtd_pontos_novos)}</td>
-      <td class="num" style="color:#666">${eF(r.qtd_pontos_existentes)}</td>
+      <td class="num" style="font-weight:700;color:#60a5fa">${eF(r.qtd_pontos_novos)}</td>
+      <td class="num" style="color:#94a3b8">${eF(r.qtd_pontos_existentes)}</td>
       <td class="num" style="font-weight:700">${eF((r.qtd_pontos_novos||0)+(r.qtd_pontos_existentes||0))}</td>
       <td class="num" style="font-weight:700;color:#ff5c00">${eBRL(eqC(r))}</td>
       <td>${eqBadge(r.status)}</td>
-      <td style="color:#888;font-size:11px">${r.data_aprovacao?new Date(r.data_aprovacao+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</td>
-      <td style="color:#999;font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.observacoes||''}">${r.observacoes||'—'}</td>
+      <td style="color:#64748b;font-size:11px">${r.data_aprovacao?new Date(r.data_aprovacao+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</td>
+      <td style="color:#64748b;font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.observacoes||''}">${r.observacoes||'—'}</td>
       <td><button class="btn-sm btn-edit" onclick="eqEditar(${r.id})">Editar</button><button class="btn-sm btn-delete" onclick="eqExcluir(${r.id})">Excluir</button></td>
     </tr>`).join('')}</tbody>
   </table></div>
@@ -1518,8 +1635,9 @@ function invKpis(data){
   const qtdB = base.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
   const qtdS = sfp.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
   const valB = soma(base), valS = soma(sfp), valT = valB+valS;
-  const cidades = new Set(data.map(e=>e.cidade).filter(Boolean)).size;
-  const pops    = new Set(data.map(e=>e.hostname).filter(Boolean)).size;
+  const norm = s => (s||'').trim().toUpperCase();
+  const cidades  = new Set(data.map(e=>norm(e.cidade)).filter(Boolean)).size;
+  const pops     = new Set(data.map(e=>{const c=norm(e.cidade),p=norm(e.pop||e.hostname);return(c&&p)?c+'::'+p:null;}).filter(Boolean)).size;
   const fmt = v => v>=1e6 ? 'R$ '+(v/1e6).toFixed(2)+'M' : v>=1e3 ? 'R$ '+(v/1e3).toFixed(1)+'K' : fmtBRL(v);
   document.getElementById('inv-kpi-qtdBase').textContent = qtdB.toLocaleString('pt-BR');
   document.getElementById('inv-kpi-qtdBaseSub').textContent = base.length+' registros';
@@ -1549,14 +1667,16 @@ function invRender(data){
     return `<tr>
       <td><strong>${e.tipo||'—'}</strong></td>
       <td><span style="background:${cor}22;color:${cor};border:1px solid ${cor}44;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${e.categoria||'—'}</span></td>
-      <td><span style="background:#f1f5f9;color:#475569;border-radius:4px;padding:2px 8px;font-size:11px">${e.tipo_inventario||'BASE'}</span></td>
+      <td><span style="background:rgba(255,255,255,.08);color:#94a3b8;border-radius:4px;padding:2px 8px;font-size:11px">${e.tipo_inventario||'BASE'}</span></td>
+      <td style="font-size:11px;color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.modelo||''}">${e.modelo||'—'}</td>
       <td>${e.fabricante||'—'}</td>
       <td>${e.cidade||'—'}</td>
-      <td>${e.hostname||'—'}</td>
+      <td><span style="background:rgba(255,92,0,.1);color:#ff7a2e;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${e.pop||'—'}</span></td>
+      <td style="font-size:11px;color:var(--muted);font-family:monospace">${e.hostname||'—'}</td>
       <td class="center">${parseInt(e.quantidade||1).toLocaleString('pt-BR')}</td>
       <td class="right">${fmtBRL(e.valor_unitario)}</td>
-      <td class="right" style="font-weight:700;color:${valTotal>0?'#16a34a':'#94a3b8'}">${valTotal>0?fmtBRL(valTotal):'—'}</td>
-      <td class="center"><button onclick="invExcluir(${e.id})" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:5px;padding:3px 10px;font-size:11px;cursor:pointer;">Excluir</button></td>
+      <td class="right" style="font-weight:700;color:${valTotal>0?'#22c55e':'#94a3b8'}">${valTotal>0?fmtBRL(valTotal):'—'}</td>
+      <td class="center"><button onclick="invExcluir(${e.id})" style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:5px;padding:3px 10px;font-size:11px;cursor:pointer;">Excluir</button></td>
     </tr>`;
   }).join('');
 }
@@ -1566,10 +1686,174 @@ function invFiltrar(){
   const cat   = document.getElementById('inv-fCategoria').value;
   const cid   = document.getElementById('inv-fCidade').value;
   const filtrado = invDados.filter(e=>{
-    const txt = [e.tipo,e.fabricante,e.hostname].join(' ').toLowerCase();
+    const txt = [e.tipo,e.fabricante,e.hostname,e.pop,e.modelo,e.servico].join(' ').toLowerCase();
     return (!busca||txt.includes(busca)) && (!cat||e.categoria===cat) && (!cid||e.cidade===cid);
   });
   invRender(filtrado);
+}
+
+/* ── Alternar visualização Lista / Por POP ── */
+function invVisualizacao(v){
+  const isLista = v==='lista';
+  document.getElementById('inv-view-lista').style.display = isLista ? 'block' : 'none';
+  document.getElementById('inv-view-pops').style.display  = isLista ? 'none'  : 'block';
+  document.getElementById('inv-filtros-wrap').style.display = isLista ? 'flex' : 'none';
+  const bL = document.getElementById('inv-v-lista');
+  const bP = document.getElementById('inv-v-pops');
+  bL.style.background = isLista ? '#ff5c00' : 'transparent';
+  bL.style.color = isLista ? '#fff' : 'rgba(255,255,255,.45)';
+  bP.style.background = isLista ? 'transparent' : '#ff5c00';
+  bP.style.color = isLista ? 'rgba(255,255,255,.45)' : '#fff';
+  if(!isLista) invRenderPops(invDados);
+}
+
+/* ── Renderização agrupada por POP/Hostname ── */
+function invRenderPops(data){
+  const grid = document.getElementById('inv-pops-grid');
+  const norm = s => (s||'').trim().toUpperCase();
+  const CAT_COR = {
+    'ATIVO REDE':'#3b82f6','ATIVO ELETRICO':'#f97316','ESTRUTURA':'#64748b',
+    'PASSIVO ELETRICO':'#22c55e','PASSIVO OPTICO':'#a855f7','SFP':'#06b6d4'
+  };
+  // Agrupar por Cidade + POP (combinação única)
+  const grupos = {};
+  data.forEach(e=>{
+    const cid    = norm(e.cidade) || '—';
+    const popNm  = norm(e.pop||e.hostname) || 'SEM POP';
+    const popKey = cid + '::' + popNm;
+    if(!grupos[popKey]) grupos[popKey] = {cidade:cid, popNome:popNm, hostnames:new Set(), itens:[], qtd:0, valor:0};
+    const v = parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1);
+    grupos[popKey].itens.push(e);
+    grupos[popKey].qtd += parseInt(e.quantidade||1);
+    grupos[popKey].valor += v;
+    if(e.hostname) grupos[popKey].hostnames.add(e.hostname);
+  });
+  const pops = Object.entries(grupos).sort((a,b)=>b[1].valor-a[1].valor);
+  if(!pops.length){grid.innerHTML='<div style="color:var(--muted);text-align:center;padding:40px;grid-column:1/-1">Nenhum equipamento cadastrado.</div>';return;}
+  grid.innerHTML = pops.map(([pop,g])=>{
+    const linhas = g.itens.map(e=>{
+      const vt = parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1);
+      const cor = CAT_COR[e.categoria]||'#94a3b8';
+      return `<tr>
+        <td style="padding:6px 10px;font-size:12px;font-weight:600;color:var(--text)">${e.tipo||'—'}</td>
+        <td style="padding:6px 4px;"><span style="background:${cor}22;color:${cor};border:1px solid ${cor}44;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;white-space:nowrap">${e.categoria||'—'}</span></td>
+        <td style="padding:6px 4px;text-align:center;font-size:12px;font-weight:700;color:var(--text2)">${parseInt(e.quantidade||1)}</td>
+        <td style="padding:6px 10px;text-align:right;font-size:12px;font-weight:700;color:${vt>0?'#22c55e':'var(--muted)'}">${vt>0?fmtBRL(vt):'—'}</td>
+      </tr>`;
+    }).join('');
+    const fmtV = v=> v>=1e6?'R$ '+(v/1e6).toFixed(2)+'M': v>=1e3?'R$ '+(v/1e3).toFixed(1)+'K':fmtBRL(v);
+    const isSemPop = g.popNome==='SEM POP';
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <!-- Header do card POP -->
+      <div style="background:${isSemPop?'rgba(100,116,139,.12)':'rgba(255,92,0,.08)'};border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px">${isSemPop?'📦':'🗼'}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:800;color:${isSemPop?'var(--muted)':'#fff'}">${g.popNome}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">${g.cidade} &nbsp;·&nbsp; <span style="font-family:monospace;font-size:9px">${[...g.hostnames].join(', ')||'—'}</span></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:14px;font-weight:800;color:#ff5c00">${fmtV(g.valor)}</div>
+          <div style="font-size:10px;color:var(--muted)">${g.qtd} itens &bull; ${g.itens.length} reg.</div>
+        </div>
+      </div>
+      <!-- Tabela de equipamentos do POP -->
+      <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr style="background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);">
+            <th style="padding:6px 10px;text-align:left;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.6px">EQUIPAMENTO</th>
+            <th style="padding:6px 4px;text-align:left;font-size:10px;color:var(--muted);font-weight:700">CAT.</th>
+            <th style="padding:6px 4px;text-align:center;font-size:10px;color:var(--muted);font-weight:700">QTD</th>
+            <th style="padding:6px 10px;text-align:right;font-size:10px;color:var(--muted);font-weight:700">VALOR</th>
+          </tr></thead>
+          <tbody>${linhas}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Relatório PDF ── */
+function invRelatorio(){
+  const data = invDados;
+  const norm = s=>(s||'').trim().toUpperCase();
+  const fBRL = v=>v!=null?'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const soma = arr=>arr.reduce((s,e)=>s+(parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1)),0);
+  const qtdTot = data.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
+  const valTot = soma(data);
+  const hoje = new Date().toLocaleDateString('pt-BR');
+
+  // Agrupar por categoria
+  const cats = {};
+  data.forEach(e=>{
+    const c = e.categoria||'SEM CATEGORIA';
+    if(!cats[c]) cats[c]=[];
+    cats[c].push(e);
+  });
+
+  const linhasCat = Object.entries(cats).map(([cat,itens])=>{
+    const linhas = itens.map(e=>{
+      const vt = parseFloat(e.valor_unitario||0)*parseInt(e.quantidade||1);
+      return `<tr>
+        <td>${e.tipo||'—'}</td>
+        <td>${e.tipo_inventario||'BASE'}</td>
+        <td>${e.fabricante||'—'}</td>
+        <td>${e.cidade||'—'}</td>
+        <td>${e.hostname||'—'}</td>
+        <td style="text-align:center">${parseInt(e.quantidade||1)}</td>
+        <td style="text-align:right">${fBRL(e.valor_unitario)}</td>
+        <td style="text-align:right;font-weight:700">${vt>0?fBRL(vt):'—'}</td>
+      </tr>`;
+    }).join('');
+    const subtotal = soma(itens);
+    const qtdCat  = itens.reduce((s,e)=>s+parseInt(e.quantidade||1),0);
+    return `
+      <tr class="cat-header"><td colspan="8">📁 ${cat} — ${qtdCat} itens | Subtotal: ${fBRL(subtotal)}</td></tr>
+      ${linhas}
+    `;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  <title>Inventário MOV FIBRA — ${hoje}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;font-size:11pt;color:#111;background:#fff;padding:20px}
+    h1{font-size:18pt;font-weight:900;color:#ff5c00;letter-spacing:1px}
+    .sub{font-size:10pt;color:#555;margin-top:2px}
+    .kpis{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}
+    .kpi{background:#f8f9fc;border:1px solid #e4e7ef;border-radius:8px;padding:10px 16px;min-width:140px}
+    .kpi-v{font-size:16pt;font-weight:800;color:#ff5c00}
+    .kpi-l{font-size:8pt;color:#666;text-transform:uppercase;letter-spacing:.5px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th{background:#111;color:#fff;font-size:9pt;padding:6px 8px;text-align:left}
+    td{font-size:9pt;padding:5px 8px;border-bottom:1px solid #e8eaed}
+    tr:nth-child(even) td{background:#f9f9f9}
+    .cat-header td{background:#ff5c00;color:#fff;font-weight:700;font-size:10pt;padding:8px 10px}
+    .total-row td{background:#111;color:#fff;font-weight:700;font-size:10pt;padding:8px 10px}
+    .footer{margin-top:20px;font-size:8pt;color:#aaa;text-align:center}
+    @media print{body{padding:10px}.footer{position:fixed;bottom:0;width:100%}}
+  </style></head><body>
+  <h1>MOV FIBRA — Inventário de Equipamentos</h1>
+  <div class="sub">Relatório gerado em ${hoje} &nbsp;|&nbsp; ${data.length} tipos de equipamento</div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-v">${qtdTot.toLocaleString('pt-BR')}</div><div class="kpi-l">Total de Itens</div></div>
+    <div class="kpi"><div class="kpi-v" style="font-size:13pt">${fBRL(valTot)}</div><div class="kpi-l">Valor Total</div></div>
+    <div class="kpi"><div class="kpi-v">${new Set(data.map(e=>norm(e.cidade)).filter(Boolean)).size}</div><div class="kpi-l">Cidades</div></div>
+    <div class="kpi"><div class="kpi-v">${new Set(data.map(e=>norm(e.hostname)).filter(Boolean)).size}</div><div class="kpi-l">POPs / Hostnames</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Equipamento</th><th>Inv.</th><th>Fabricante</th><th>Cidade</th><th>POP/Hostname</th><th style="text-align:center">Qtd</th><th style="text-align:right">Vlr.Unit.</th><th style="text-align:right">Vlr.Total</th></tr></thead>
+    <tbody>
+      ${linhasCat}
+      <tr class="total-row"><td colspan="5">TOTAL GERAL</td><td style="text-align:center">${qtdTot.toLocaleString('pt-BR')}</td><td></td><td style="text-align:right">${fBRL(valTot)}</td></tr>
+    </tbody>
+  </table>
+  <div class="footer">MOV FIBRA Sistema de Gestão &bull; Gerado em ${hoje}</div>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`;
+
+  const w = window.open('','_blank','width=1100,height=800');
+  w.document.write(html);
+  w.document.close();
 }
 
 let invEditandoId = null;
@@ -1578,11 +1862,12 @@ function invAbrirModal(id){
   invEditandoId = id||null;
   document.getElementById('inv-modal-titulo').textContent = id ? 'Editar Equipamento' : '+ Novo Equipamento';
   if(!id){
-    ['inv-fTipo','inv-fFab','inv-fHost','inv-fValor'].forEach(f=>document.getElementById(f).value='');
+    ['inv-fTipo','inv-fModelo','inv-fFab','inv-fPop','inv-fHost','inv-fServico','inv-fValor'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('inv-fQtd').value=1;
     document.getElementById('inv-fCat').value='ATIVO REDE';
     document.getElementById('inv-fTipoInv').value='BASE';
     document.getElementById('inv-fCidadeM').value='';
+    document.getElementById('inv-fProprio').value='PROPRIO';
   }
   const ov = document.getElementById('inv-overlay');
   ov.style.display='flex';
@@ -1598,13 +1883,17 @@ async function invSalvar(){
   if(!tipo){ showToast('Informe o tipo de equipamento','error'); return; }
   const payload = {
     tipo,
-    categoria: document.getElementById('inv-fCat').value,
+    categoria:       document.getElementById('inv-fCat').value,
     tipo_inventario: document.getElementById('inv-fTipoInv').value,
-    fabricante: document.getElementById('inv-fFab').value.trim().toUpperCase()||null,
-    cidade: document.getElementById('inv-fCidadeM').value||null,
-    hostname: document.getElementById('inv-fHost').value.trim().toUpperCase()||null,
-    quantidade: parseInt(document.getElementById('inv-fQtd').value)||1,
-    valor_unitario: parseBRL(document.getElementById('inv-fValor').value)||0
+    modelo:          document.getElementById('inv-fModelo').value.trim()||null,
+    fabricante:      document.getElementById('inv-fFab').value.trim().toUpperCase()||null,
+    proprio_swap:    document.getElementById('inv-fProprio').value||'PROPRIO',
+    cidade:          document.getElementById('inv-fCidadeM').value||null,
+    pop:             document.getElementById('inv-fPop').value.trim().toUpperCase()||null,
+    hostname:        document.getElementById('inv-fHost').value.trim().toUpperCase()||null,
+    servico:         document.getElementById('inv-fServico').value.trim().toUpperCase()||null,
+    quantidade:      parseInt(document.getElementById('inv-fQtd').value)||1,
+    valor_unitario:  parseBRL(document.getElementById('inv-fValor').value)||0
   };
   const db = getCentralDB();
   let error;
@@ -1700,7 +1989,7 @@ function ctRenderTabela(lista){
   el.innerHTML=`<table class="data-table">
     <thead><tr><th>#</th><th>Tipo</th><th>Nome</th><th>Cidade</th><th>Locador</th><th class="right">Valor Mensal</th><th>Renovação</th><th class="center">Situação</th><th class="center">Ações</th></tr></thead>
     <tbody>${lista.map((c,i)=>`<tr>
-      <td style="color:#ccc;font-size:11px">${i+1}</td>
+      <td style="color:#64748b;font-size:11px">${i+1}</td>
       <td><span class="badge badge-blue">${c.tipo}</span></td>
       <td style="font-weight:600">${c.nome}</td>
       <td>${c.cidade||'—'}</td>
@@ -1933,7 +2222,7 @@ function smRenderCatalogoNoModal(itensExistentes={}){
     return;
   }
   el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px;">
-    <thead><tr style="background:#f8f9fc;border-bottom:1.5px solid var(--border);">
+    <thead><tr style="background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.1);">
       <th style="padding:8px 12px;text-align:center;font-weight:700;color:var(--muted);font-size:11px;width:36px;"></th>
       <th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--muted);font-size:11px;">MATERIAL</th>
       <th style="padding:8px 12px;text-align:center;font-weight:700;color:var(--muted);font-size:11px;">UNIDADE</th>
@@ -1943,19 +2232,19 @@ function smRenderCatalogoNoModal(itensExistentes={}){
     <tbody>${smCatalogo.map((item,i)=>{
       const qtyExist = itensExistentes[item.id]||0;
       const checked  = qtyExist>0;
-      return `<tr id="sm-row-${item.id}" style="border-bottom:1px solid var(--border);transition:background .15s;${checked?'background:#fff7ed;':i%2===0?'':'background:#fafbfd'}">
+      return `<tr id="sm-row-${item.id}" style="border-bottom:1px solid rgba(255,255,255,.06);transition:background .15s;${checked?'background:rgba(255,92,0,.08);':i%2===0?'':'background:rgba(255,255,255,.02)'}">
         <td style="padding:8px 12px;text-align:center;">
           <input type="checkbox" id="sm-chk-${item.id}" ${checked?'checked':''} style="width:16px;height:16px;cursor:pointer;accent-color:var(--orange);"
             onchange="smToggleItem(${item.id},this.checked)">
         </td>
-        <td style="padding:8px 12px;font-weight:500;">${item.nome}</td>
+        <td style="padding:8px 12px;font-weight:500;color:#e2e8f0;">${item.nome}</td>
         <td style="padding:8px 12px;text-align:center;color:var(--muted);">${item.unidade||'un'}</td>
         <td style="padding:8px 12px;text-align:center;color:var(--muted);">${fmtBRL(item.valor_unitario)}</td>
         <td style="padding:6px 12px;text-align:center;">
           <input type="number" min="1" step="1" placeholder="—"
             id="sm-qty-${item.id}"
             value="${qtyExist||''}"
-            ${!checked?'disabled style="width:80px;text-align:center;border:1.5px solid #e4e7ef;border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:#f3f4f6;color:#ccc;"':'style="width:80px;text-align:center;border:1.5px solid var(--orange);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;"'}>
+            ${!checked?'disabled style="width:80px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:rgba(255,255,255,.04);color:#475569;"':'style="width:80px;text-align:center;border:1.5px solid var(--orange);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:#0d0f1a;color:#e2e8f0;"'}>
         </td>
       </tr>`;
     }).join('')}
@@ -1969,14 +2258,14 @@ function smToggleItem(id, checked){
   if(checked){
     row.style.background='#fff7ed';
     qty.disabled=false;
-    qty.style.cssText='width:80px;text-align:center;border:1.5px solid var(--orange);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;';
+    qty.style.cssText='width:80px;text-align:center;border:1.5px solid var(--orange);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:#0d0f1a;color:#e2e8f0;';
     if(!qty.value) qty.value='1';
     qty.focus();
   } else {
     row.style.background='';
     qty.disabled=true;
     qty.value='';
-    qty.style.cssText='width:80px;text-align:center;border:1.5px solid #e4e7ef;border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:#f3f4f6;color:#ccc;';
+    qty.style.cssText='width:80px;text-align:center;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;outline:none;background:rgba(255,255,255,.04);color:#475569;';
   }
 }
 
