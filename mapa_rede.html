@@ -992,6 +992,21 @@ async function mapaCarregar(){
       var s = linkStyles[rec.link_type]||linkStyles.backbone;
       layer.setStyle({color:color,weight:s.weight,opacity:s.opacity,dashArray:s.dashArray});
     }
+    // Reaplicar posição/traçado salvos (drag de marcador ou reforma de cabo)
+    if(rec.coordinates){
+      try{
+        var savedCoords = JSON.parse(rec.coordinates);
+        if(savedCoords && savedCoords.length){
+          if(typeof layer.setLatLngs === 'function' && savedCoords.length > 1){
+            layer.setLatLngs(savedCoords);
+          } else if(typeof layer.setLatLng === 'function'){
+            layer.setLatLng(savedCoords[0]);
+          } else if(typeof layer.setLatLngs === 'function'){
+            layer.setLatLngs(savedCoords);
+          }
+        }
+      } catch(e){}
+    }
     layer.setTooltipContent(makeTooltip(rec.name||layer._mapData.name, rec.description||layer._mapData.desc||''));
   });
 }
